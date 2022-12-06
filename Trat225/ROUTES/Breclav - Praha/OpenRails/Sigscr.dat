@@ -1,0 +1,9212 @@
+//////////////////////////////////////////////////
+//
+//  Script pro návesti Ceských Drah verze pro Breclav-Praha
+//
+//  Jirí Polák jiripolak@volny.cz
+//
+//  Modely návestidel: Jirí Polák jiripolak@volny.cz
+//
+//////////////////////////////////////////////////
+// >>> Autori puvodni verze: <<<
+// Svetelne navestidla:
+// > modely: Stary <http://www.msts.cz>
+// > skripty: tomi <tomi.msts@centrum.cz>
+//////////////////////////////////////////////////
+
+SCRIPT PREDNORM
+
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	state;
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( next_nor ==# 7 || next_nor ==# 2 )
+	state = 7;
+	else state = 2;
+
+
+SCRIPT MEZIN
+
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	state;
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( block_state () !=# 0 )
+	state = 0;
+	else if ( next_nor ==# 0 )
+	state = 1;
+	else state = next_nor;
+
+
+SCRIPT MEZII
+
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	block_state ();
+	extern float	state;
+
+	float			next_nor;
+	float			next_inf;
+	float			this_dis;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+	next_inf = next_sig_lr (SIGFN_INFO);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	if ( block_state () !=# 0 ||
+		( next_nor != next_inf && next_inf ==# 1 ) )
+	state = 1;
+	else if ( this_dis ==# -1 && next_nor ==# 0 )
+	state = 0;
+	else state = 7;
+
+
+SCRIPT PRED4/8
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = next_nor;
+	if ( this_nor ==# 0 || this_nor ==# 1 )
+	{
+		state = 0;
+		draw_state = 35;
+	}
+	else if ( !sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ==# 7 ) )
+	{
+		state = 7;
+		draw_state = 0;
+	}
+//BEZ REP
+	else if ( this_rep ==# -1 || next_nor >= this_nor )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 18;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 9;
+		else if ( next_nor ==# 5 )
+			draw_state = 1;
+		else draw_state = 35;
+	}
+//REP
+	else if ( this_rep ==# 0 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 19;
+			else draw_state = 20;
+		}
+		else if ( next_nor ==# 3 )
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 11;
+		}
+		else if ( next_nor ==# 5 )
+		{
+			draw_state = 2;
+		}
+		else
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 27;
+			else draw_state = 28;
+		}
+	}
+//REP 4R
+	else if ( this_rep ==# 1 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 19;
+			else draw_state = 21;
+		}
+		else if ( next_nor ==# 3 )
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 12;
+		}
+		else if ( next_nor ==# 5 )
+		{
+			draw_state = 3;
+		}
+		else
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 27;
+			else draw_state = 29;
+		}
+	}
+//REP 6A
+	else if ( this_rep ==# 2 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 22;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 13;
+		else if ( next_nor ==# 5 )
+			draw_state = 4;
+		else draw_state = 30;
+	}
+//REP 5T
+	else if ( this_rep ==# 3 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 23;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 14;
+		else if ( next_nor ==# 5 )
+			draw_state = 5;
+		else draw_state = 31;
+	}
+//REP 5Z
+	else if ( this_rep ==# 4 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 24;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 15;
+		else if ( next_nor ==# 5 )
+			draw_state = 6;
+		else draw_state = 32;
+	}
+//REP BLV
+	else if ( this_rep ==# 5 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 25;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 16;
+		else if ( next_nor ==# 5 )
+			draw_state = 7;
+		else draw_state = 33;
+	}
+//REP 2_2
+	else
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 26;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 17;
+		else if ( next_nor ==# 5 )
+			draw_state = 8;
+		else draw_state = 34;
+	}
+
+
+SCRIPT PRED4/8A_II
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = next_nor;
+	if ( this_nor ==# 0 || this_nor ==# 1 )
+	{
+		state = 0;
+		draw_state = 35;
+	}
+	else if ( !sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ==# 7 ) )
+	{
+		state = 7;
+		draw_state = 0;
+	}
+//BEZ REP
+	else if ( this_rep ==# -1 || next_nor >= this_nor )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 18;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 9;
+		else if ( next_nor ==# 5 )
+			draw_state = 1;
+		else draw_state = 35;
+	}
+//REP
+	else if ( this_rep ==# 0 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 19;
+			else draw_state = 20;
+		}
+		else if ( next_nor ==# 3 )
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 11;
+		}
+		else if ( next_nor ==# 5 )
+		{
+			draw_state = 2;
+		}
+		else
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 27;
+			else draw_state = 28;
+		}
+	}
+//REP 4R
+	else if ( this_rep ==# 1 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 19;
+			else draw_state = 21;
+		}
+		else if ( next_nor ==# 3 )
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 12;
+		}
+		else if ( next_nor ==# 5 )
+		{
+			draw_state = 3;
+		}
+		else
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 27;
+			else draw_state = 29;
+		}
+	}
+//REP 6A
+	else if ( this_rep ==# 2 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 22;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 13;
+		else if ( next_nor ==# 5 )
+			draw_state = 4;
+		else draw_state = 30;
+	}
+//REP 5T
+	else if ( this_rep ==# 3 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 23;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 14;
+		else if ( next_nor ==# 5 )
+			draw_state = 5;
+		else draw_state = 31;
+	}
+//REP 5Z
+	else if ( this_rep ==# 4 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 24;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 15;
+		else if ( next_nor ==# 5 )
+			draw_state = 6;
+		else draw_state = 32;
+	}
+//REP BLV
+	else if ( this_rep ==# 5 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 25;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 16;
+		else if ( next_nor ==# 5 )
+			draw_state = 7;
+		else draw_state = 33;
+	}
+//REP 2_2
+	else
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 26;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 17;
+		else if ( next_nor ==# 5 )
+			draw_state = 8;
+		else draw_state = 34;
+	}
+
+
+SCRIPT PRED4/8R_II
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = next_nor;
+	if ( this_nor ==# 0 || this_nor ==# 1 )
+	{
+		state = 0;
+		draw_state = 35;
+	}
+	else if ( !sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ==# 7 ) )
+	{
+		state = 7;
+		draw_state = 0;
+	}
+//BEZ REP
+	else if ( this_rep ==# -1 || next_nor >= this_nor )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 18;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 9;
+		else if ( next_nor ==# 5 )
+			draw_state = 1;
+		else draw_state = 35;
+	}
+//REP
+	else if ( this_rep ==# 0 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 19;
+			else draw_state = 20;
+		}
+		else if ( next_nor ==# 3 )
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 11;
+		}
+		else if ( next_nor ==# 5 )
+		{
+			draw_state = 2;
+		}
+		else
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 27;
+			else draw_state = 28;
+		}
+	}
+//REP 4R
+	else if ( this_rep ==# 1 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 19;
+			else draw_state = 21;
+		}
+		else if ( next_nor ==# 3 )
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 12;
+		}
+		else if ( next_nor ==# 5 )
+		{
+			draw_state = 3;
+		}
+		else
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 27;
+			else draw_state = 29;
+		}
+	}
+//REP 6A
+	else if ( this_rep ==# 2 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 22;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 13;
+		else if ( next_nor ==# 5 )
+			draw_state = 4;
+		else draw_state = 30;
+	}
+//REP 5T
+	else if ( this_rep ==# 3 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 23;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 14;
+		else if ( next_nor ==# 5 )
+			draw_state = 5;
+		else draw_state = 31;
+	}
+//REP 5Z
+	else if ( this_rep ==# 4 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 24;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 15;
+		else if ( next_nor ==# 5 )
+			draw_state = 6;
+		else draw_state = 32;
+	}
+//REP BLV
+	else if ( this_rep ==# 5 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 25;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 16;
+		else if ( next_nor ==# 5 )
+			draw_state = 7;
+		else draw_state = 33;
+	}
+//REP 2_2
+	else
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 26;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 17;
+		else if ( next_nor ==# 5 )
+			draw_state = 8;
+		else draw_state = 34;
+	}
+
+
+
+SCRIPT PRED4/8_TUN
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = next_nor;
+	if ( this_nor ==# 0 || this_nor ==# 1 )
+	{
+		state = 0;
+		draw_state = 35;
+	}
+	else if ( !sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ==# 7 ) )
+	{
+		state = 7;
+		draw_state = 0;
+	}
+//BEZ REP
+	else if ( this_rep ==# -1 || next_nor >= this_nor )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 18;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 9;
+		else if ( next_nor ==# 5 )
+			draw_state = 1;
+		else draw_state = 35;
+	}
+//REP
+	else if ( this_rep ==# 0 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 19;
+			else draw_state = 20;
+		}
+		else if ( next_nor ==# 3 )
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 11;
+		}
+		else if ( next_nor ==# 5 )
+		{
+			draw_state = 2;
+		}
+		else
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 27;
+			else draw_state = 28;
+		}
+	}
+//REP 4R
+	else if ( this_rep ==# 1 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 19;
+			else draw_state = 21;
+		}
+		else if ( next_nor ==# 3 )
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 12;
+		}
+		else if ( next_nor ==# 5 )
+		{
+			draw_state = 3;
+		}
+		else
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 27;
+			else draw_state = 29;
+		}
+	}
+//REP 6A
+	else if ( this_rep ==# 2 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 22;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 13;
+		else if ( next_nor ==# 5 )
+			draw_state = 4;
+		else draw_state = 30;
+	}
+//REP 5T
+	else if ( this_rep ==# 3 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 23;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 14;
+		else if ( next_nor ==# 5 )
+			draw_state = 5;
+		else draw_state = 31;
+	}
+//REP 5Z
+	else if ( this_rep ==# 4 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 24;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 15;
+		else if ( next_nor ==# 5 )
+			draw_state = 6;
+		else draw_state = 32;
+	}
+//REP BLV
+	else if ( this_rep ==# 5 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 25;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 16;
+		else if ( next_nor ==# 5 )
+			draw_state = 7;
+		else draw_state = 33;
+	}
+//REP 2_2
+	else
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 26;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 17;
+		else if ( next_nor ==# 5 )
+			draw_state = 8;
+		else draw_state = 34;
+	}
+
+
+SCRIPT PRED4/8_R65
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = next_nor;
+	if ( this_nor ==# 0 || this_nor ==# 1 )
+	{
+		state = 0;
+		draw_state = 35;
+	}
+	else if ( !sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ==# 7 ) )
+	{
+		state = 7;
+		draw_state = 0;
+	}
+//BEZ REP
+	else if ( this_rep ==# -1 || next_nor >= this_nor )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 18;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 9;
+		else if ( next_nor ==# 5 )
+			draw_state = 1;
+		else draw_state = 35;
+	}
+//REP
+	else if ( this_rep ==# 0 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 19;
+			else draw_state = 20;
+		}
+		else if ( next_nor ==# 3 )
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 11;
+		}
+		else if ( next_nor ==# 5 )
+		{
+			draw_state = 2;
+		}
+		else
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 27;
+			else draw_state = 28;
+		}
+	}
+//REP 4R
+	else if ( this_rep ==# 1 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 19;
+			else draw_state = 21;
+		}
+		else if ( next_nor ==# 3 )
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 12;
+		}
+		else if ( next_nor ==# 5 )
+		{
+			draw_state = 3;
+		}
+		else
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 27;
+			else draw_state = 29;
+		}
+	}
+//REP 6A
+	else if ( this_rep ==# 2 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 22;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 13;
+		else if ( next_nor ==# 5 )
+			draw_state = 4;
+		else draw_state = 30;
+	}
+//REP 5T
+	else if ( this_rep ==# 3 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 23;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 14;
+		else if ( next_nor ==# 5 )
+			draw_state = 5;
+		else draw_state = 31;
+	}
+//REP 5Z
+	else if ( this_rep ==# 4 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 24;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 15;
+		else if ( next_nor ==# 5 )
+			draw_state = 6;
+		else draw_state = 32;
+	}
+//REP BLV
+	else if ( this_rep ==# 5 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 25;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 16;
+		else if ( next_nor ==# 5 )
+			draw_state = 7;
+		else draw_state = 33;
+	}
+//REP 2_2
+	else
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 26;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 17;
+		else if ( next_nor ==# 5 )
+			draw_state = 8;
+		else draw_state = 34;
+	}
+
+
+SCRIPT PRED6/10
+
+	extern float	this_sig_lr ();
+	extern float	draw_state;
+
+	float			this_dis;
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	if ( this_dis ==# 6 )
+	draw_state = 0;
+	else if ( this_dis ==# 4 )
+	draw_state = 1;
+	else draw_state = 2;
+
+
+
+SCRIPT PREDR4/8
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = next_nor;
+	if ( this_nor ==# 0 || this_nor ==# 1 )
+	{
+		state = 0;
+		draw_state = 4;
+	}
+	else if ( !sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ==# 7 ) )
+	{
+		state = 7;
+		draw_state = 0;
+	}
+	else if ( next_nor ==# 0 || next_nor ==# 1 ||
+		( sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ># 4 ) ) )
+	{
+		state = 2;
+		draw_state = 3;
+	}
+	else if ( next_nor ==# 3 )
+		draw_state = 2;
+	else if ( next_nor ==# 5 )
+		draw_state = 1;
+	else draw_state = 4;
+
+
+SCRIPT PREDR6/10
+
+	extern float	this_sig_lr ();
+	extern float	draw_state;
+
+	float			this_dis;
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	if ( this_dis ==# 6 )
+	draw_state = 0;
+	else if ( this_dis ==# 4 )
+	draw_state = 1;
+	else draw_state = 2;
+
+
+SCRIPT PRED12
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( this_sig_lr (SIGFN_DISTANCE) ==# 6 )
+	draw_state = 0;
+	else draw_state = 1;
+
+
+SCRIPT OPRED4/8
+
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = next_nor;
+	if ( next_nor ==# 0 || next_nor ==# 1 )
+	draw_state = 3;
+	else if ( next_nor ==# 3 )
+	draw_state = 2;
+	else if ( next_nor ==# 4 )
+	draw_state = 4;
+	else if ( next_nor ==# 5 )
+	draw_state = 1;
+	else if ( next_nor ==# 6 )
+	draw_state = 4;
+	else draw_state = 0;
+
+
+SCRIPT O4PRED4/8
+
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = next_nor;
+	if ( next_nor ==# 0 || next_nor ==# 1 )
+	draw_state = 3;
+	else if ( next_nor ==# 3 )
+	draw_state = 2;
+	else if ( next_nor ==# 4 )
+	draw_state = 4;
+	else if ( next_nor ==# 5 )
+	draw_state = 1;
+	else if ( next_nor ==# 6 )
+	draw_state = 4;
+	else draw_state = 0;
+
+
+SCRIPT PREDOPK
+
+	extern float	state;
+	extern float	draw_state;
+
+	state = 0;
+	draw_state = 0;
+
+
+SCRIPT PREDOP4R
+
+	extern float	state;
+	extern float	draw_state;
+
+	state = 1;
+	draw_state = 0;
+
+
+SCRIPT PREDOP6
+
+	extern float	state;
+	extern float	draw_state;
+
+	state = 2;
+	draw_state = 0;
+
+
+SCRIPT PREDOPT
+
+	extern float	state;
+	extern float	draw_state;
+
+	state = 3;
+	draw_state = 0;
+
+
+SCRIPT PREDOPZ
+
+	extern float	state;
+	extern float	draw_state;
+
+	state = 4;
+	draw_state = 0;
+
+
+SCRIPT PREDOPBLV
+
+	extern float	state;
+	extern float	draw_state;
+
+	state = 5;
+	draw_state = 0;
+
+
+SCRIPT PREDOP2_2
+
+	extern float	state;
+	extern float	draw_state;
+
+	state = 6;
+	draw_state = 0;
+
+
+SCRIPT PREDAB4/8
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			this_nor;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( this_nor ==# 0 )
+	state = 0;
+	else if ( next_nor ==# 0 || next_nor ==# 1 )
+	state = 2;
+	else if ( next_nor ==# 2 )
+	state = 7;
+	else 	state = next_nor;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT AB4OP
+
+	extern float	state;
+	extern float	draw_state;
+
+	state = 0;
+	draw_state = 0;
+
+
+SCRIPT PREDOBB
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = next_nor;
+	if ( this_nor ==# 0 )
+	{
+		state = 0;
+		draw_state = 4;
+	}
+	else if ( !sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ==# 7 ) )
+	{
+		state = 7;
+		draw_state = 0;
+	}
+	else if ( next_nor ==# 0 || next_nor ># 4 )
+	{
+		state = 2;
+		draw_state = 3;
+	}
+	else if ( next_nor ==# 3 )
+		draw_state = 2;
+	else if ( next_nor ==# 4 )
+		draw_state = 1;
+	else draw_state = 4;
+
+
+SCRIPT SKRYTA
+
+	extern float	block_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( block_state () ==# 2 )
+	state = 0;
+	else state = next_nor;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N160
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	float			this_dis;
+	float			this_rep;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+      else if ( this_rep !=# -1 && ( next_nor ==# 0 || next_nor ==# 1 ||
+		( sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ># 4 ) ) ) )
+	state = 3;
+	else if ( sig_feature (SIGFEAT_USER2) ||
+		( ( this_dis !=# -1 && next_nor !=# 7 ) &&
+		next_nor !=# 2 ) || ( sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ># 4 ) ) )
+	state = 2;
+	else state = 7;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT NM160
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER2) )
+	state = 2;
+//	else if ( next_nor ==# 0 )
+//	state = 3;
+	else state = 7;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT NX160
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	float			this_rep;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else if ( next_nor ==# 7 || next_nor ==# 2 )
+	state = 7;
+      else if ( this_rep !=# -1 )
+	state = 3;
+	else state = 2;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N120IA
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	float			this_rep;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+      else if ( this_rep !=# -1 && ( next_nor ==# 0 || next_nor ==# 1 ||
+		( sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ># 4 ) ) ) )
+	state = 3;
+	else state = 6;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N120SI
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	float			this_rep;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+      else if ( this_rep !=# -1 && ( next_nor ==# 0 || next_nor ==# 1 ||
+		( sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ># 4 ) ) ) )
+	state = 3;
+	else state = 6;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N100
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	float			this_rep;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+      else if ( this_rep !=# -1 && ( next_nor ==# 0 || next_nor ==# 1 ||
+		( sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ># 4 ) ) ) )
+	state = 3;
+	else state = 6;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N100IA
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	float			this_rep;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+      else if ( this_rep !=# -1 && ( next_nor ==# 0 || next_nor ==# 1 ||
+		( sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ># 4 ) ) ) )
+	state = 3;
+	else state = 6;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N80
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	float			this_rep;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+      else if ( this_rep !=# -1 && ( next_nor ==# 0 || next_nor ==# 1 ||
+		( sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ># 4 ) ) ) )
+	state = 3;
+	else state = 5;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N80IA
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	float			this_rep;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+      else if ( this_rep !=# -1 && ( next_nor ==# 0 || next_nor ==# 1 ||
+		( sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ># 4 ) ) ) )
+	state = 3;
+	else state = 5;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N60
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	float			this_rep;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+      else if ( this_rep !=# -1 && ( next_nor ==# 0 || next_nor ==# 1 ||
+		( sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ># 4 ) ) ) )
+	state = 3;
+	else state = 4;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N60IA
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	float			this_rep;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+      else if ( this_rep !=# -1 && ( next_nor ==# 0 || next_nor ==# 1 ||
+		( sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ># 4 ) ) ) )
+	state = 3;
+	else state = 4;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N50IOBB
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else state = 3;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N50SI
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else state = 3;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N50IA
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else state = 3;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N50BI
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else state = 3;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N60UR
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else state = 3;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N80UR
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else state = 3;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N40
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else state = 3;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT NV40
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else if ( next_nor ==# 0 )
+	state = 2;
+	else state = 3;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N30SI
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else state = 3;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N30IA
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else state = 3;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N30BI
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else state = 3;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT N30XX
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else state = 3;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT NPP
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE)  &&
+		sig_feature (SIGFEAT_USER4) && next_nor ==# 0 ) )
+	state = 0;
+	else state = 1;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT VLOZPOV
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		next_nor ==# 0 ||	block_state () !=# 0 )
+	state = 0;
+	else if ( next_nor ==# 1 )
+	state = 1;
+	else state = 7;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT VLOZPOS
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	if ( !enabled || !route_set () || block_state () ==# 2 ||
+		( block_state () !=# 0 && !sig_feature (SIGFEAT_USER4) ) )
+	state = 0;
+	else state = 1;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT ABLOK
+
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( block_state () !=# 0 )
+	state = 0;
+	else if ( next_nor ==# 7 || next_nor ==# 2 )
+	state = 7;
+	else state = 2;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT A4BLOK
+
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	float			next_rep;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+	next_rep = next_sig_lr (SIGFN_REPEATER);
+
+	if ( block_state () !=# 0 )
+	state = 0;
+	else if ( next_nor ==# 7 || next_nor ==# 2 )
+	state = 7;
+	else state = 2;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT STOP
+
+	extern float	state;
+	extern float	draw_state;
+
+	state = 0;
+	draw_state = 0;
+
+
+SCRIPT VYSTRAHA
+
+	extern float	state;
+	extern float	draw_state;
+
+	state = 2;
+	draw_state = 0;
+
+
+SCRIPT POSUN
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	if ( !enabled || !route_set () || block_state () ==# 2 ||
+		( block_state () !=# 0 && !sig_feature (SIGFEAT_USER4) ) )
+	state = 0;
+	else state = 1;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT NAV10A
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 4;
+			else draw_state = 5;
+		}
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 15;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else if ( this_nor ==# 5 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 10;
+		else draw_state = 11;
+	}
+	else if ( this_nor ==# 6 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 12;
+		else draw_state = 13;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 14;
+		else draw_state = 15;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 15;
+	}
+
+
+SCRIPT NAV9A
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 4;
+			else draw_state = 5;
+		}
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 15;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else if ( this_nor ==# 5 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 10;
+		else draw_state = 11;
+	}
+	else if ( this_nor ==# 6 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 12;
+		else draw_state = 13;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 14;
+		else draw_state = 15;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 15;
+	}
+
+
+SCRIPT NAV9BLV
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 6;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 3;
+		else draw_state = 4;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 5;
+		else draw_state = 6;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 6;
+	}
+
+
+SCRIPT NAV7A
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	extern float block_state();
+	extern float route_set();
+	extern float def_draw_state();
+	extern float sig_feature();
+	extern float enabled;
+	extern float TrainHasCallOn();
+
+	float			this_nor;
+	float			this_rep;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	
+	if (((block_state () == #BLOCK_OCCUPIED)) && TrainHasCallOn())
+	{
+		state = SIGASP_STOP_AND_PROCEED;
+		draw_state = 3;
+	}
+	else if ( this_nor ==# 0 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 4;
+			else draw_state = 5;
+		}
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 15;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else if ( this_nor ==# 5 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 10;
+		else draw_state = 11;
+	}
+	else if ( this_nor ==# 6 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 12;
+		else draw_state = 13;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 14;
+		else draw_state = 15;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 15;
+	}
+
+
+SCRIPT NAV7R
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 4;
+			else draw_state = 5;
+		}
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 15;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else if ( this_nor ==# 5 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 10;
+		else draw_state = 11;
+	}
+	else if ( this_nor ==# 6 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 12;
+		else draw_state = 13;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 14;
+		else draw_state = 15;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 15;
+	}
+
+
+SCRIPT NAV7R65
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 4;
+			else draw_state = 5;
+		}
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 15;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else if ( this_nor ==# 5 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 10;
+		else draw_state = 11;
+	}
+	else if ( this_nor ==# 6 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 12;
+		else draw_state = 13;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 14;
+		else draw_state = 15;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 15;
+	}
+
+
+SCRIPT NAV7A_BZ
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 4;
+			else draw_state = 5;
+		}
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 15;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else if ( this_nor ==# 5 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 10;
+		else draw_state = 11;
+	}
+	else if ( this_nor ==# 6 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 12;
+		else draw_state = 13;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 14;
+		else draw_state = 15;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 15;
+	}
+
+
+SCRIPT NAV5+1R
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 4;
+			else draw_state = 5;
+		}
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 15;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else if ( this_nor ==# 5 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 10;
+		else draw_state = 11;
+	}
+	else if ( this_nor ==# 6 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 12;
+		else draw_state = 13;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 14;
+		else draw_state = 15;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 15;
+	}
+
+
+SCRIPT NAV5+1R65
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 4;
+			else draw_state = 5;
+		}
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 15;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else if ( this_nor ==# 5 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 10;
+		else draw_state = 11;
+	}
+	else if ( this_nor ==# 6 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 12;
+		else draw_state = 13;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 14;
+		else draw_state = 15;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 15;
+	}
+
+
+SCRIPT NAV5+1R65_A
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 4;
+			else draw_state = 5;
+		}
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 15;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else if ( this_nor ==# 5 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 10;
+		else draw_state = 11;
+	}
+	else if ( this_nor ==# 6 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 12;
+		else draw_state = 13;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 14;
+		else draw_state = 15;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 15;
+	}
+
+
+SCRIPT NAV6A
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 12;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 3;
+		else draw_state = 4;
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 5;
+		else draw_state = 6;
+	}
+	else if ( this_nor ==# 5 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 7;
+		else draw_state = 8;
+	}
+	else if ( this_nor ==# 6 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 9;
+		else draw_state = 10;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 11;
+		else draw_state = 12;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 12;
+	}
+
+
+SCRIPT NAVY6A
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+			draw_state = 1;
+			else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 15;
+		else draw_state = 16;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( next_nor ==# 2 || next_nor ==# 7 )
+		{
+			draw_state = 5;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 3;
+			else draw_state = 4;
+		}
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( next_nor ==# 2 || next_nor ==# 7 )
+		{
+			draw_state = 8;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 6;
+			else draw_state = 7;
+		}
+	}
+	else if ( this_nor ==# 5 )
+	{
+		if ( next_nor ==# 2 || next_nor ==# 7 )
+		{
+			draw_state = 11;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 9;
+			else draw_state = 10;
+		}
+	}
+	else if ( this_nor ==# 6 )
+	{
+		if ( next_nor ==# 2 || next_nor ==# 7 )
+		{
+			draw_state = 14;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 12;
+			else draw_state = 13;
+		}
+	}
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 17;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 18;
+	}
+
+
+SCRIPT NAV6R
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 5;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 4;
+		else draw_state = 3;
+	}	
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 7;
+	}
+
+
+SCRIPT NAVX5A
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 5;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 4;
+		else draw_state = 3;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 7;
+	}
+
+
+SCRIPT NAVY5A
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+			draw_state = 1;
+			else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 15;
+		else draw_state = 16;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( next_nor ==# 2 || next_nor ==# 7 )
+		{
+			draw_state = 5;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 3;
+			else draw_state = 4;
+		}
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( next_nor ==# 2 || next_nor ==# 7 )
+		{
+			draw_state = 8;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 6;
+			else draw_state = 7;
+		}
+	}
+	else if ( this_nor ==# 5 )
+	{
+		if ( next_nor ==# 2 || next_nor ==# 7 )
+		{
+			draw_state = 11;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 9;
+			else draw_state = 10;
+		}
+	}
+	else if ( this_nor ==# 6 )
+	{
+		if ( next_nor ==# 2 || next_nor ==# 7 )
+		{
+			draw_state = 14;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 12;
+			else draw_state = 13;
+		}
+	}
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 17;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 18;
+	}
+
+
+SCRIPT NAVX5R
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 5;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 4;
+		else draw_state = 3;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 7;
+	}
+
+
+SCRIPT NAV5IA
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 4;
+			else draw_state = 5;
+		}
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 9;
+	}
+	else if ( this_nor ># 2 && this_nor <# 7 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 9;
+	}
+  
+  
+SCRIPT NAV5_IR65
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 4;
+			else draw_state = 5;
+		}
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 9;
+	}
+	else if ( this_nor ># 2 && this_nor <# 7 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 9;
+	}  
+
+
+SCRIPT NAV5T
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 6;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 3;
+		else draw_state = 4;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 5;
+		else draw_state = 6;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 6;
+	}
+
+
+SCRIPT NAVY5T
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+			draw_state = 1;
+			else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( next_nor ==# 2 || next_nor ==# 7 )
+		{
+			draw_state = 5;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 3;
+			else draw_state = 4;
+		}
+	}
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 8;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 9;
+	}
+
+
+SCRIPT NAV5Z
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 6;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 3;
+		else draw_state = 4;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 5;
+		else draw_state = 6;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 6;
+	}
+
+
+SCRIPT NAV5TBRN
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+			draw_state = 1;
+			else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 3;
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		{
+			if ( next_nor ==# 7 || next_nor ==# 2 )
+			draw_state = 4;
+			else draw_state = 3;
+		}
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 4;
+		else draw_state = 5;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 5;
+	}
+
+
+SCRIPT NAV4A
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			this_rep;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+			this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+		draw_state = 0;
+		else if ( this_rep ==# -1 || sig_feature (SIGFEAT_USER3) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+				this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+				draw_state = 4;
+			else
+			{
+				if ( this_rep ==# -1 )
+				draw_state = 5;
+				else if ( sig_feature (SIGFEAT_USER3) )
+				draw_state = 3;
+				else draw_state = 4;
+			}
+		}	
+		else
+		{
+			if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+				this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+				draw_state = 9;
+			else
+			{
+				if ( this_rep ==# -1 )
+				draw_state = 8;
+				else if ( sig_feature (SIGFEAT_USER3) )
+				draw_state = 6;
+				else draw_state = 7;
+			}
+		}	
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 13;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 11;
+		else if ( this_rep !=# -1 && !sig_feature (SIGFEAT_USER3) )
+		draw_state = 13;
+		else draw_state = 10;
+	}	
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 12;
+		else draw_state = 13;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 13;
+	}
+
+
+SCRIPT NAV4A_SKUP
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		draw_state = 3;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 1;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 1;
+		else draw_state = 2;
+	}	
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 2;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 4;
+	}
+
+
+SCRIPT NAV4R_SKUP
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		draw_state = 3;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 1;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 1;
+		else draw_state = 2;
+	}	
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 2;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 4;
+	}
+
+
+SCRIPT NAV4_TUN
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			this_rep;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+			this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+		draw_state = 0;
+		else if ( this_rep ==# -1 || sig_feature (SIGFEAT_USER3) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+				this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+				draw_state = 4;
+			else
+			{
+				if ( this_rep ==# -1 )
+				draw_state = 5;
+				else if ( sig_feature (SIGFEAT_USER3) )
+				draw_state = 3;
+				else draw_state = 4;
+			}
+		}	
+		else
+		{
+			if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+				this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+				draw_state = 9;
+			else
+			{
+				if ( this_rep ==# -1 )
+				draw_state = 8;
+				else if ( sig_feature (SIGFEAT_USER3) )
+				draw_state = 6;
+				else draw_state = 7;
+			}
+		}	
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 13;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 11;
+		else if ( this_rep !=# -1 && !sig_feature (SIGFEAT_USER3) )
+		draw_state = 13;
+		else draw_state = 10;
+	}	
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 12;
+		else draw_state = 13;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 13;
+	}
+
+
+SCRIPT NAV4_2A
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			this_rep;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_dis ==# -1 || ( this_rep ==# -1
+			&& this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+				this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+			draw_state = 2;
+			else draw_state = 3;
+		}	
+		else
+		{
+			if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+				this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+			draw_state = 4;
+			else draw_state = 5;
+		}	
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 15;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 7;
+		else if ( this_rep !=# -1 && !sig_feature (SIGFEAT_USER3) )
+		draw_state = 15;
+		else draw_state = 6;
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 9;
+		else draw_state = 8;
+	}	
+	else if ( this_nor ==# 5 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 11;
+		else draw_state = 10;
+	}	
+	else if ( this_nor ==# 6 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 13;
+		else draw_state = 12;
+	}	
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 14;
+		else draw_state = 15;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 15;
+	}
+
+
+SCRIPT NAV4R
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			this_rep;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+			this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+		draw_state = 0;
+		else if ( this_rep ==# -1 || sig_feature (SIGFEAT_USER3) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+				this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+				draw_state = 4;
+			else
+			{
+				if ( this_rep ==# -1 )
+				draw_state = 5;
+				else if ( sig_feature (SIGFEAT_USER3) )
+				draw_state = 3;
+				else draw_state = 4;
+			}
+		}	
+		else
+		{
+			if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+				this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+				draw_state = 9;
+			else
+			{
+				if ( this_rep ==# -1 )
+				draw_state = 8;
+				else if ( sig_feature (SIGFEAT_USER3) )
+				draw_state = 6;
+				else draw_state = 7;
+			}
+		}	
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 13;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 11;
+		else if ( this_rep !=# -1 && !sig_feature (SIGFEAT_USER3) )
+		draw_state = 13;
+		else draw_state = 10;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 12;
+		else draw_state = 13;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 13;
+	}
+
+
+SCRIPT NAV4R65
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			this_rep;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+			this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+		draw_state = 0;
+		else if ( this_rep ==# -1 || sig_feature (SIGFEAT_USER3) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+				this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+				draw_state = 4;
+			else
+			{
+				if ( this_rep ==# -1 )
+				draw_state = 5;
+				else if ( sig_feature (SIGFEAT_USER3) )
+				draw_state = 3;
+				else draw_state = 4;
+			}
+		}	
+		else
+		{
+			if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+				this_dis !=# -1 && sig_feature (SIGFEAT_USER3) ) )
+				draw_state = 9;
+			else
+			{
+				if ( this_rep ==# -1 )
+				draw_state = 8;
+				else if ( sig_feature (SIGFEAT_USER3) )
+				draw_state = 6;
+				else draw_state = 7;
+			}
+		}	
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 13;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 11;
+		else if ( this_rep !=# -1 && !sig_feature (SIGFEAT_USER3) )
+		draw_state = 13;
+		else draw_state = 10;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 12;
+		else draw_state = 13;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 13;
+	}
+
+
+SCRIPT NAVX4A
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+			draw_state = 1;
+			else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 3;
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		{
+			if ( next_nor ==# 7 || next_nor ==# 2 )
+			draw_state = 4;
+			else draw_state = 3;
+		}
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 4;
+		else draw_state = 5;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 5;
+	}
+
+
+SCRIPT NAVX4A_II
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+			draw_state = 1;
+			else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 3;
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		{
+			if ( next_nor ==# 7 || next_nor ==# 2 )
+			draw_state = 4;
+			else draw_state = 3;
+		}
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 4;
+		else draw_state = 5;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 5;
+	}
+
+
+SCRIPT NAVX4R
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+			draw_state = 1;
+			else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 3;
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		{
+			if ( next_nor ==# 7 || next_nor ==# 2 )
+			draw_state = 4;
+			else draw_state = 3;
+		}
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 4;
+		else draw_state = 5;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 5;
+	}
+
+
+SCRIPT NAVX4R65
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+			draw_state = 1;
+			else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 3;
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		{
+			if ( next_nor ==# 7 || next_nor ==# 2 )
+			draw_state = 4;
+			else draw_state = 3;
+		}
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 4;
+		else draw_state = 5;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 5;
+	}
+
+
+
+SCRIPT NAVX4R_II
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+			draw_state = 1;
+			else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 3;
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		{
+			if ( next_nor ==# 7 || next_nor ==# 2 )
+			draw_state = 4;
+			else draw_state = 3;
+		}
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 4;
+		else draw_state = 5;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 5;
+	}
+
+
+SCRIPT NAVY4A
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+			draw_state = 1;
+			else draw_state = 2;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 3;
+		else draw_state = 4;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 5;
+	}
+
+
+SCRIPT NAVZ4A
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			this_rep;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+			draw_state = 1;
+			else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_dis ==# -1 )
+		{	
+			if ( this_rep ==# -1 )
+			draw_state = 3;
+			else draw_state = 4;
+		}
+		else draw_state = 6;
+	}
+	else if ( this_nor >=# 3 && this_nor <=# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 5;
+		else draw_state = 6;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 5;
+	}
+
+
+SCRIPT NAV4T
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			this_rep;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_dis ==# -1 || sig_feature (SIGFEAT_USER3) )
+				draw_state = 1;
+				else draw_state = 2;
+		}	
+		else
+		{
+			if ( this_dis ==# -1 || sig_feature (SIGFEAT_USER3) )
+				draw_state = 3;
+				else draw_state = 4;
+		}	
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 8;
+		else draw_state = 10;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		{
+			if ( this_rep !=# -1 && !sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 5;
+		}
+		else if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 10;
+		else if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 10;
+	}
+
+
+SCRIPT NAV4T_II
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			this_rep;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_dis ==# -1 || sig_feature (SIGFEAT_USER3) )
+				draw_state = 1;
+				else draw_state = 2;
+		}	
+		else
+		{
+			if ( this_dis ==# -1 || sig_feature (SIGFEAT_USER3) )
+				draw_state = 3;
+				else draw_state = 4;
+		}	
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 8;
+		else draw_state = 10;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		{
+			if ( this_rep !=# -1 && !sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 5;
+		}
+		else if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 10;
+		else if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 10;
+	}
+
+
+SCRIPT NAV4T2_2
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 5;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 3;
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 4;
+		else draw_state = 5;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 5;
+	}
+
+
+SCRIPT NAVX4T2_2
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+			draw_state = 1;
+			else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 3;
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis ==# -1 )
+		{
+			if ( next_nor ==# 7 || next_nor ==# 2 )
+			draw_state = 4;
+			else draw_state = 3;
+		}
+		else draw_state = 5;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 4;
+		else draw_state = 5;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 5;
+	}
+
+
+SCRIPT NAV3
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			this_rep;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+			sig_feature (SIGFEAT_USER3) ) )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+				sig_feature (SIGFEAT_USER3) ) )
+			draw_state = 3;
+			else draw_state = 2;
+		}	
+		else
+		{
+			if ( this_dis ==# -1 || ( this_rep ==# -1 &&
+				sig_feature (SIGFEAT_USER3) ) )
+			draw_state = 5;
+			else draw_state = 4;
+		}	
+	}
+	else if ( this_nor ==# 2 )
+	{
+		if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 9;
+		else draw_state = 11;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( this_dis !=# -1 )
+		{
+			if ( this_rep !=# -1 || !sig_feature (SIGFEAT_USER3) )
+			draw_state = 11;
+			else draw_state = 6;
+		}
+		else if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 7;
+		else draw_state = 8;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 11;
+		else if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 9;
+		else draw_state = 10;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 11;
+	}
+
+
+SCRIPT NAVX3
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			this_rep;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 3 || this_nor ==# 7 )
+	{
+		draw_state = 3;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 4;
+	}
+
+
+SCRIPT NAVX2POS
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_dis;
+	float			this_rep;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 3 || this_nor ==# 7 )
+	{
+		draw_state = 3;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 4;
+	}
+
+
+SCRIPT NAV_PRIVOL
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( sig_feature (SIGFEAT_USER1) )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		draw_state = 2;
+		else draw_state = 3;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 4;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 5;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 6;
+	}
+
+
+SCRIPT NAV_OPAK_1SV
+
+
+	extern float	next_sig_lr ();
+ 	extern float  this_sig_lr ();
+  extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float	next_nor;
+	float this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = next_nor;
+	if ( this_nor ==# 0 )
+	{
+		state = 0;
+		draw_state = 1;
+	}
+	else if ( next_nor >=# 2 && next_nor <=# 7 ) draw_state = 0;
+	else draw_state = 1;
+  
+  
+SCRIPT NAV2A
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( sig_feature (SIGFEAT_USER1) )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		draw_state = 2;
+		else draw_state = 3;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 4;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 5;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 6;
+	}
+
+
+SCRIPT NAV2R
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		draw_state = 1;
+		else draw_state = 2;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 3;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 4;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 5;
+	}
+
+
+SCRIPT NAVVLOZ
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( sig_feature (SIGFEAT_USER3) )
+		draw_state = 1;
+		else draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		draw_state = 3;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 2;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 4;
+	}
+
+
+SCRIPT PREDMECH
+
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( next_nor ==# 7 || next_nor ==# 2 )
+	state = 7;
+	else state = 2;
+
+	draw_state = def_draw_state (state);
+
+
+SCRIPT MECHRA1
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		draw_state = 3;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 1;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 1;
+		else draw_state = 2;
+	}	
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 2;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 4;
+	}
+
+
+SCRIPT MECHRA2
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	if ( this_sig_lr (SIGFN_NORMAL) ==# 3 )
+	{
+		if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 1;
+		else draw_state = 2;
+	}	
+	else	draw_state = 0;
+
+
+SCRIPT MECHRA_PRIVOL
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		draw_state = 3;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 1;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		if ( sig_feature (SIGFEAT_USER2) )
+		draw_state = 1;
+		else draw_state = 2;
+	}	
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 2;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 4;
+	}
+
+
+SCRIPT POSSV
+
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		draw_state = 1;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 2;
+	}
+
+
+SCRIPT POSME
+
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		draw_state = 1;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 2;
+	}
+
+
+SCRIPT NAVOBB
+
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 3;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		draw_state = 1;
+	}
+	else if ( this_nor ==# 4 )
+	{
+		draw_state = 2;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 3;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 4;
+	}
+
+
+SCRIPT NAVOBB_SCH
+
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 3;
+	}
+	else if ( this_nor ==# 3 )
+	{
+		draw_state = 1;
+	}
+	else if ( this_nor ==# 4 )
+	{
+		draw_state = 2;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 3;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 4;
+	}
+
+
+SCRIPT POSOBB_TRPII
+
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		draw_state = 1;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 2;
+	}
+
+
+SCRIPT POSOBB
+
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		draw_state = 1;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 2;
+	}
+
+
+SCRIPT PKP_SEM_5k
+
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			this_dis;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	this_dis = this_sig_lr (SIGFN_DISTANCE);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		if ( this_rep ==# -1 )
+		draw_state = 0;
+		else draw_state = 1;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		if ( !sig_feature (SIGFEAT_USER4) )
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 4;
+			else draw_state = 5;
+		}
+	}
+	else if ( this_nor ==# 2 )
+	{
+		draw_state = 9;
+	}
+	else if ( this_nor ># 2 && this_nor <# 7 )
+	{
+		if ( this_dis !=# -1 )
+		draw_state = 6;
+		else draw_state = 7;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		if ( this_dis ==# -1 )
+		draw_state = 8;
+		else draw_state = 9;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 9;
+	}
+
+
+SCRIPT PKP_PRED4
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float			this_nor;
+	float			this_rep;
+	float			next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+	this_rep = this_sig_lr (SIGFN_REPEATER);
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	state = next_nor;
+	if ( this_nor ==# 0 || this_nor ==# 1 )
+	{
+		state = 0;
+		draw_state = 35;
+	}
+	else if ( !sig_feature (SIGFEAT_USER3) &&
+		( next_nor ==# 2 || next_nor ==# 7 ) )
+	{
+		state = 7;
+		draw_state = 0;
+	}
+//BEZ REP
+	else if ( this_rep ==# -1 || next_nor >= this_nor )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 18;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 9;
+		else if ( next_nor ==# 5 )
+			draw_state = 1;
+		else draw_state = 35;
+	}
+//REP
+	else if ( this_rep ==# 0 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 19;
+			else draw_state = 20;
+		}
+		else if ( next_nor ==# 3 )
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 11;
+		}
+		else if ( next_nor ==# 5 )
+		{
+			draw_state = 2;
+		}
+		else
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 27;
+			else draw_state = 28;
+		}
+	}
+//REP 4R
+	else if ( this_rep ==# 1 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 19;
+			else draw_state = 21;
+		}
+		else if ( next_nor ==# 3 )
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 10;
+			else draw_state = 12;
+		}
+		else if ( next_nor ==# 5 )
+		{
+			draw_state = 3;
+		}
+		else
+		{
+			if ( sig_feature (SIGFEAT_USER3) )
+			draw_state = 27;
+			else draw_state = 29;
+		}
+	}
+//REP 6A
+	else if ( this_rep ==# 2 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 22;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 13;
+		else if ( next_nor ==# 5 )
+			draw_state = 4;
+		else draw_state = 30;
+	}
+//REP 5T
+	else if ( this_rep ==# 3 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 23;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 14;
+		else if ( next_nor ==# 5 )
+			draw_state = 5;
+		else draw_state = 31;
+	}
+//REP 5Z
+	else if ( this_rep ==# 4 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 24;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 15;
+		else if ( next_nor ==# 5 )
+			draw_state = 6;
+		else draw_state = 32;
+	}
+//REP BLV
+	else if ( this_rep ==# 5 )
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 25;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 16;
+		else if ( next_nor ==# 5 )
+			draw_state = 7;
+		else draw_state = 33;
+	}
+//REP 2_2
+	else
+	{
+		if ( next_nor ==# 0 || next_nor ==# 1 ||
+			( sig_feature (SIGFEAT_USER3) &&
+			( next_nor ==# 2 || next_nor ># 4 ) ) )
+		{
+			state = 2;
+			draw_state = 26;
+		}
+		else if ( next_nor ==# 3 )
+			draw_state = 17;
+		else if ( next_nor ==# 5 )
+			draw_state = 8;
+		else draw_state = 34;
+	}
+
+
+SCRIPT VYHNAV
+
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( route_set () )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT VYHZAV
+
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( route_set () )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT VYHANG
+
+	extern float	block_state ();
+	extern float	draw_state;
+
+	if ( block_state () !=# 2 )
+	draw_state = 0;
+	else draw_state = 1;
+
+
+SCRIPT VYKOL
+
+	extern float	block_state ();
+	extern float	draw_state;
+
+	if ( block_state () ==# 2 )
+	draw_state = 0;
+	else draw_state = 1;
+
+
+SCRIPT VYKNAV
+
+	extern float	block_state ();
+	extern float	draw_state;
+
+	if ( block_state () ==# 2 )
+	draw_state = 0;
+	else draw_state = 1;
+
+
+SCRIPT INDA_VK_TUNPROVOZ
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT INDAO
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT INDAP
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT INDAR
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT INDAH
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT INDAU
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT INDAZ
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT INDAV
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT INDO
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT INDP
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT INDR
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT INDH
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT INDL
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT INDT
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT IND1
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT IND2
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT IND3
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT IND4
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT IND5
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT IND6
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT IND7
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT IND8
+
+	extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+SCRIPT IND10
+
+  extern float	this_sig_lr ();
+	extern float	route_set ();
+	extern float	draw_state;
+
+	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
+	draw_state = 1;
+	else draw_state = 0;
+
+
+// Puvodni verze //
+
+
+
+SCRIPT AR3AutoA
+
+	extern float	block_state ();
+	extern float	next_sig_lr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+	
+	float	next_state;
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( block_state() !=# BLOCK_CLEAR )
+	{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+	}
+	else if (next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING)
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else
+	{
+		state = SIGASP_RESTRICTING;
+		if (next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2 )
+		{
+			draw_state = 5;
+		}
+		else if (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED )
+		{
+			draw_state = 2;
+		}
+		else if (next_state ==# SIGASP_APPROACH_1)
+		{
+			draw_state = 3;
+		}
+		else if (next_state ==# SIGASP_APPROACH_3)
+		{
+			draw_state = 4;
+		}
+	}
+///////////////////////////////////////////////////////////////////////////////
+SCRIPT AR3AutoB
+
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	
+	float	next_state;
+	float this_state;
+
+	next_state = next_sig_lr (SIGFN_NORMAL);
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	
+	if (this_state != SIGASP_STOP)
+	{
+		if (next_state ==# SIGASP_APPROACH_2)
+		{
+			draw_state = 1;
+		}
+		else if (next_state ==# SIGASP_CLEAR_1)
+		{
+			draw_state = 2;
+		}
+		else draw_state = 0;
+	}
+	else draw_state = 0;
+////////////////////////////////////////////////////////////
+SCRIPT R6Limit60
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+			if(this_rstate !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED || 
+						        next_state ==# SIGASP_APPROACH_1))
+			{
+				state = SIGASP_APPROACH_1;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_APPROACH_2;
+				if(this_state ==# -1) draw_state = 4;
+				else draw_state = 3;
+			}
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 5;
+/////////////////////////////////////////////////////////////////////////////////////////
+SCRIPT R6Limit80
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+			if(this_rstate !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED || 
+						        next_state ==# SIGASP_APPROACH_1))
+			{
+				state = SIGASP_APPROACH_1;
+				draw_state = def_draw_state (state);
+			}
+			else if(this_rstate !=# -1 && (next_state ==# SIGASP_APPROACH_2))
+			{
+				state = SIGASP_APPROACH_2;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_APPROACH_3;
+				if(this_state ==# -1) draw_state = 4;
+				else draw_state = 3;
+			}
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 5;	
+///////////////////////////////////////////
+SCRIPT R5DistanceRep
+
+	extern float	def_draw_state ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED && this_state !=# SIGASP_CLEAR_2))
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+/////////////////////////////////////////////////////////
+SCRIPT R5Distance60100
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED ) 
+		&& ( next_state ==# SIGASP_APPROACH_2 || next_state ==# SIGASP_CLEAR_1 )) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_1 )
+		{
+			state = SIGASP_CLEAR_1;
+			draw_state = def_draw_state (state);
+		}
+		else if ( next_state ==# SIGASP_APPROACH_2 )
+		{
+			state = SIGASP_APPROACH_2;
+			draw_state = def_draw_state (state);
+		}
+		else	draw_state = 0;
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////
+SCRIPT R5Distance4080
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED )
+		&& !(next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2)) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING )
+		{
+			state = SIGASP_CLEAR_2;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_3 )
+		{
+			state = SIGASP_APPROACH_3;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_1 )
+		{
+			state = SIGASP_APPROACH_1;
+		}
+		else 
+		{
+			state = SIGASP_RESTRICTING;
+		}
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+///////////////////////////////////////////////////////////////////
+SCRIPT R4DistanceRep
+
+	extern float	def_draw_state ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED && this_state !=# SIGASP_CLEAR_2))
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+//////////////////////////////////////////////////////////// 
+SCRIPT R4DistanceRepV2
+
+	extern float	def_draw_state ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED && this_state !=# SIGASP_CLEAR_2))
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////
+SCRIPT R4Distance60100
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED ) 
+		&& ( next_state ==# SIGASP_APPROACH_2 || next_state ==# SIGASP_CLEAR_1 )) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_1 )
+		{
+			state = SIGASP_CLEAR_1;
+			draw_state = def_draw_state (state);
+		}
+		else if ( next_state ==# SIGASP_APPROACH_2 )
+		{
+			state = SIGASP_APPROACH_2;
+			draw_state = def_draw_state (state);
+		}
+		else	draw_state = 0;
+	}
+	else	draw_state = 0;
+//////////////////////////////////////////////////////////
+SCRIPT R4Distance4080
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED )
+		&& !(next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2)) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING )
+		{
+			state = SIGASP_CLEAR_2;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_3 )
+		{
+			state = SIGASP_APPROACH_3;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_1 )
+		{
+			state = SIGASP_APPROACH_1;
+		}
+		else 
+		{
+			state = SIGASP_RESTRICTING;
+		}
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+///////////////////////////////////////////////////////////////////
+SCRIPT R4Restrict30
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+
+	float		next_state;
+	
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			state = SIGASP_STOP_AND_PROCEED;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+		}
+		draw_state = def_draw_state (state);
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 2;
+////////////////////////////////////////////////////////////////////
+SCRIPT R5Shunting
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	enabled;
+	extern float	draw_state;
+	extern float 	route_set();
+	extern float	this_sig_lr ();
+	
+	float		this_rstate;
+
+	this_rstate = this_sig_lr(SIGFN_REPEATER);
+
+	if( route_set() )
+	{
+		if ( ( block_state() ==# BLOCK_CLEAR ) && enabled )
+		{
+			
+			state = SIGASP_STOP_AND_PROCEED;
+			if(this_rstate ==# -1) draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 4;
+
+////////////////////////////////////////////////////////////////////
+SCRIPT R5Restrict30
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+
+	float		next_state;
+	float 		this_rstate;
+
+	this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			state = SIGASP_STOP_AND_PROCEED;
+			if(this_rstate ==# -1) draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 4;
+/////////////////////////////////////////////////////////////////////
+SCRIPT R5Limit40
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			state = SIGASP_APPROACH_1;
+			if(this_state ==# -1) draw_state = 3;
+			else draw_state = 2;
+			
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 4;
+//////////////////////////////////////////////////////
+SCRIPT R4Limit40
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			state = SIGASP_APPROACH_1;
+			if(this_state ==# -1) draw_state = 2;
+			else draw_state = 1;
+			
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			draw_state = def_draw_state (state);
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 3;
+///////////////////////////////////////////////////////////
+SCRIPT R5Clear
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			if(this_state !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED ||
+							 next_state ==# SIGASP_APPROACH_1 || next_state ==# SIGASP_APPROACH_2 ||
+							 next_state ==# SIGASP_APPROACH_3 || next_state ==# SIGASP_CLEAR_1))
+			{
+				state = SIGASP_RESTRICTING;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_CLEAR_2;
+				if(this_state ==# -1) draw_state = 2;
+				else draw_state = 3;
+			}
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 3;
+///////////////////////////////////////////////////////////////
+SCRIPT R4Clear
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			if(this_state !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED ||
+							 next_state ==# SIGASP_APPROACH_1 || next_state ==# SIGASP_APPROACH_2 ||
+							 next_state ==# SIGASP_APPROACH_3 || next_state ==# SIGASP_CLEAR_1))
+			{
+				state = SIGASP_RESTRICTING;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_CLEAR_2;
+				if(this_state ==# -1) draw_state = 1;
+				else draw_state = 2;
+			}
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			draw_state = def_draw_state (state);
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 2;
+///////////////////////////////////////////////////////////////
+SCRIPT R2Shunting
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	enabled;
+	extern float	draw_state;
+
+	if ( ( block_state() ==# BLOCK_CLEAR ) && enabled )
+	{
+		state = SIGASP_STOP_AND_PROCEED;
+	}
+	else
+	{
+		state = SIGASP_STOP;
+	}
+	draw_state = def_draw_state (state);	
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT R2ShuntImit
+
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	state = SIGASP_STOP;
+	draw_state = def_draw_state (state);	
+///////////////////////////////////////////////////////////////
+SCRIPT R2ImitClear
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float next_state;
+
+	next_state = next_sig_lr (SIGFN_NORMAL);
+	if( block_state() ==# BLOCK_OCCUPIED )
+		state = SIGASP_STOP;
+	else if( next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED )
+		state = SIGASP_STOP_AND_PROCEED;
+	else if ( next_state ==# SIGASP_RESTRICTING )
+		state = SIGASP_RESTRICTING;
+	else if ( next_state ==# SIGASP_APPROACH_1 )
+		state = SIGASP_APPROACH_1;
+	else if ( next_state ==# SIGASP_APPROACH_2 )
+		state = SIGASP_APPROACH_2;
+	else if ( next_state ==# SIGASP_APPROACH_3 )
+		state = SIGASP_APPROACH_3;
+	else if ( next_state ==# SIGASP_CLEAR_1 )
+		state = SIGASP_CLEAR_1;
+	else state = SIGASP_CLEAR_2;
+
+	draw_state = def_draw_state (state);
+////////////////////////////////////////////////////////////////
+SCRIPT R2Distance4080
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED )
+		&& !(next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2)) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING )
+		{
+			state = SIGASP_CLEAR_2;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_3 )
+		{
+			state = SIGASP_APPROACH_3;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_1 )
+		{
+			state = SIGASP_APPROACH_1;
+		}
+		else 
+		{
+			state = SIGASP_RESTRICTING;
+		}
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+///////////////////////////////////////////////////////////////////
+SCRIPT R2Distance60100
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED ) 
+		&& ( next_state ==# SIGASP_APPROACH_2 || next_state ==# SIGASP_CLEAR_1 )) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_1 )
+		{
+			state = SIGASP_CLEAR_1;
+			draw_state = def_draw_state (state);
+		}
+		else if ( next_state ==# SIGASP_APPROACH_2 )
+		{
+			state = SIGASP_APPROACH_2;
+			draw_state = def_draw_state (state);
+		}
+		else	draw_state = 0;
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////
+SCRIPT M4Distance60100
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED ) 
+		&& ( next_state ==# SIGASP_APPROACH_2 || next_state ==# SIGASP_CLEAR_1 )) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_1 )
+		{
+			state = SIGASP_CLEAR_1;
+			draw_state = def_draw_state (state);
+		}
+		else if ( next_state ==# SIGASP_APPROACH_2 )
+		{
+			state = SIGASP_APPROACH_2;
+			draw_state = def_draw_state (state);
+		}
+		else	draw_state = 0;
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////
+SCRIPT M4Distance4080
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED )
+		&& !(next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2)) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING )
+		{
+			state = SIGASP_CLEAR_2;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_3 )
+		{
+			state = SIGASP_APPROACH_3;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_1 )
+		{
+			state = SIGASP_APPROACH_1;
+		}
+		else 
+		{
+			state = SIGASP_RESTRICTING;
+		}
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////////////
+SCRIPT M4DistanceRep
+
+	extern float	def_draw_state ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED && this_state !=# SIGASP_CLEAR_2))
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+///////////////////////////////////////////////////////
+SCRIPT M4DistanceRepV2
+
+	extern float	def_draw_state ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED && this_state !=# SIGASP_CLEAR_2))
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+///////////////////////////////////////////////////////
+SCRIPT M4Restrict30
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+
+	float		next_state;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			state = SIGASP_STOP_AND_PROCEED;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+		}
+		draw_state = def_draw_state (state);	
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 2;
+////////////////////////////////////////////////////////////
+SCRIPT M4Restrict30V2
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+
+	float		next_state;
+	float 		this_rstate;
+
+	this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			state = SIGASP_STOP_AND_PROCEED;
+			if(this_rstate ==# -1) draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 4;
+///////////////////////////////////////////////////////////////////
+SCRIPT M4Limit40V2
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			state = SIGASP_APPROACH_1;
+			if(this_state ==# -1) draw_state = 2;
+			else draw_state = 1;
+			
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			draw_state = def_draw_state (state);
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 3;
+////////////////////////////////////////////////////////////
+SCRIPT M4Limit40
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			state = SIGASP_APPROACH_1;
+			if(this_state ==# -1) draw_state = 2;
+			else draw_state = 1;
+			
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			draw_state = def_draw_state (state);
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 3;
+////////////////////////////////////////////////////////////
+SCRIPT M4Clear
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			if(this_state !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED ||
+							 next_state ==# SIGASP_APPROACH_1 || next_state ==# SIGASP_APPROACH_2 ||
+							 next_state ==# SIGASP_APPROACH_3 || next_state ==# SIGASP_CLEAR_1))
+			{
+				state = SIGASP_RESTRICTING;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_CLEAR_2;
+				if(this_state ==# -1) draw_state = 1;
+				else draw_state = 2;
+			}
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			draw_state = def_draw_state (state);
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 2;
+////////////////////////////////////////////////////////////
+SCRIPT M4ClearV2
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			if(this_state !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED ||
+							 next_state ==# SIGASP_APPROACH_1 || next_state ==# SIGASP_APPROACH_2 ||
+							 next_state ==# SIGASP_APPROACH_3 || next_state ==# SIGASP_CLEAR_1))
+			{
+				state = SIGASP_RESTRICTING;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_CLEAR_2;
+				if(this_state ==# -1) draw_state = 2;
+				else draw_state = 3;
+			}
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 3;
+///////////////////////////////////////////////////////////////
+SCRIPT M5Clear
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			if(this_state !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED ||
+							 next_state ==# SIGASP_APPROACH_1 || next_state ==# SIGASP_APPROACH_2 ||
+							 next_state ==# SIGASP_APPROACH_3 || next_state ==# SIGASP_CLEAR_1))
+			{
+				state = SIGASP_RESTRICTING;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_CLEAR_2;
+				if(this_state ==# -1) draw_state = 2;
+				else draw_state = 3;
+			}
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 3;
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT M5Limit40
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			state = SIGASP_APPROACH_1;
+			if(this_state ==# -1) draw_state = 3;
+			else draw_state = 2;
+			
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 4;
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT M5Distance60100
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED ) 
+		&& ( next_state ==# SIGASP_APPROACH_2 || next_state ==# SIGASP_CLEAR_1 )) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_1 )
+		{
+			state = SIGASP_CLEAR_1;
+			draw_state = def_draw_state (state);
+		}
+		else if ( next_state ==# SIGASP_APPROACH_2 )
+		{
+			state = SIGASP_APPROACH_2;
+			draw_state = def_draw_state (state);
+		}
+		else	draw_state = 0;
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////
+SCRIPT M5Distance4080
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED )
+		&& !(next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2)) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING )
+		{
+			state = SIGASP_CLEAR_2;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_3 )
+		{
+			state = SIGASP_APPROACH_3;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_1 )
+		{
+			state = SIGASP_APPROACH_1;
+		}
+		else 
+		{
+			state = SIGASP_RESTRICTING;
+		}
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////////////
+SCRIPT M5Shunting
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	enabled;
+	extern float	draw_state;
+	extern float 	route_set();
+	extern float	this_sig_lr ();
+
+	float 		this_rstate;
+
+	this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+	if( route_set() )
+	{
+		if ( ( block_state() ==# BLOCK_CLEAR ) && enabled )
+		{
+			
+			state = SIGASP_STOP_AND_PROCEED;
+			if(this_rstate ==# -1) draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 4;
+////////////////////////////////////////////////////////////////////
+SCRIPT M5Restrict30
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+
+	float		next_state;
+	float 		this_rstate;
+
+	this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			state = SIGASP_STOP_AND_PROCEED;
+			if(this_rstate ==# -1) draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 4;
+////////////////////////////////////////////////////////////////////
+SCRIPT M5DistanceRep
+
+	extern float	def_draw_state ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED && this_state !=# SIGASP_CLEAR_2))
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+//////////////////////////////////////////////////////////
+SCRIPT M7Clear
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			if(this_state !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED ||
+							 next_state ==# SIGASP_APPROACH_1 || next_state ==# SIGASP_APPROACH_2 ||
+							 next_state ==# SIGASP_APPROACH_3 || next_state ==# SIGASP_CLEAR_1))
+			{
+				state = SIGASP_RESTRICTING;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_CLEAR_2;
+				if(this_state ==# -1) draw_state = 2;
+				else draw_state = 3;
+			}
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 3;
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT M7Limit40
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			state = SIGASP_APPROACH_1;
+			if(this_state ==# -1) draw_state = 3;
+			else draw_state = 2;
+			
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 4;
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT M7Limit60
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+			if(this_rstate !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED))
+			{
+				state = SIGASP_APPROACH_1;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_APPROACH_2;
+				if(this_state ==# -1) draw_state = 4;
+				else draw_state = 3;
+			}
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 5;
+/////////////////////////////////////////////////////////////////////////////////////////
+SCRIPT M7Limit80
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+			if(this_rstate !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED || 
+						        next_state ==# SIGASP_APPROACH_1))
+			{
+				state = SIGASP_APPROACH_1;
+				draw_state = def_draw_state (state);
+			}
+			else if(this_rstate !=# -1 && (next_state ==# SIGASP_APPROACH_2))
+			{
+				state = SIGASP_APPROACH_2;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_APPROACH_3;
+				if(this_state ==# -1) draw_state = 4;
+				else draw_state = 3;
+			}
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 5;	
+///////////////////////////////////////////
+SCRIPT M7Limit100
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+			if(this_rstate !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED || 
+						        next_state ==# SIGASP_APPROACH_1))
+			{
+				state = SIGASP_APPROACH_1;
+				draw_state = def_draw_state (state);
+			}
+			else if(this_rstate !=# -1 && (next_state ==# SIGASP_APPROACH_2))
+			{
+				state = SIGASP_APPROACH_2;
+				draw_state = def_draw_state (state);
+			}
+			else if(this_rstate !=# -1 && (next_state ==# SIGASP_APPROACH_3))
+			{
+				state = SIGASP_APPROACH_3;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_CLEAR_1;
+				if(this_state ==# -1) draw_state = 4;
+				else draw_state = 3;
+			}
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 5;	
+////////////////////////////////////////////////////////////
+SCRIPT M7Distance60100
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED ) 
+		&& ( next_state ==# SIGASP_APPROACH_2 || next_state ==# SIGASP_CLEAR_1 )) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_1 )
+		{
+			state = SIGASP_CLEAR_1;
+			draw_state = def_draw_state (state);
+		}
+		else if ( next_state ==# SIGASP_APPROACH_2 )
+		{
+			state = SIGASP_APPROACH_2;
+			draw_state = def_draw_state (state);
+		}
+		else	draw_state = 0;
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////
+SCRIPT M7Distance4080
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED )
+		&& !(next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2)) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING )
+		{
+			state = SIGASP_CLEAR_2;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_3 )
+		{
+			state = SIGASP_APPROACH_3;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_1 )
+		{
+			state = SIGASP_APPROACH_1;
+		}
+		else 
+		{
+			state = SIGASP_RESTRICTING;
+		}
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////////////
+SCRIPT M7Shunting
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	enabled;
+	extern float	draw_state;
+	extern float 	route_set();
+	extern float	this_sig_lr ();
+
+	float 		this_rstate;
+
+	this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+	if( route_set() )
+	{
+		if ( ( block_state() ==# BLOCK_CLEAR ) && enabled )
+		{
+			
+			state = SIGASP_STOP_AND_PROCEED;
+			if(this_rstate ==# -1) draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 4;
+////////////////////////////////////////////////////////////////////
+SCRIPT M7Restrict30
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+
+	float		next_state;
+	float 		this_rstate;
+
+	this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			state = SIGASP_STOP_AND_PROCEED;
+			if(this_rstate ==# -1) draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 4;
+////////////////////////////////////////////////////////////////////
+SCRIPT M7DistanceRep
+
+	extern float	def_draw_state ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED && this_state !=# SIGASP_CLEAR_2))
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////////////////
+SCRIPT N2ShuntingV2
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	enabled;
+	extern float	draw_state;
+
+	if ( ( block_state() ==# BLOCK_CLEAR ) && enabled )
+	{
+		state = SIGASP_STOP_AND_PROCEED;
+	}
+	else
+	{
+		state = SIGASP_STOP;
+	}
+	draw_state = def_draw_state (state);	
+////////////////////////////////////////////////////////////////////
+SCRIPT N2ImitClear
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float next_state;
+
+	next_state = next_sig_lr (SIGFN_NORMAL);
+	if( block_state() ==# BLOCK_OCCUPIED )
+		state = SIGASP_STOP;
+	else if( next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED )
+		state = SIGASP_STOP_AND_PROCEED;
+	else if ( next_state ==# SIGASP_RESTRICTING )
+		state = SIGASP_RESTRICTING;
+	else if ( next_state ==# SIGASP_APPROACH_1 )
+		state = SIGASP_APPROACH_1;
+	else if ( next_state ==# SIGASP_APPROACH_2 )
+		state = SIGASP_APPROACH_2;
+	else if ( next_state ==# SIGASP_APPROACH_3 )
+		state = SIGASP_APPROACH_3;
+	else if ( next_state ==# SIGASP_CLEAR_1 )
+		state = SIGASP_CLEAR_1;
+	else state = SIGASP_CLEAR_2;
+
+	draw_state = def_draw_state (state);
+/////////////////////////////////////////////////////////////////////
+SCRIPT T2ImitClear
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float next_state;
+
+	next_state = next_sig_lr (SIGFN_NORMAL);
+	if( block_state() ==# BLOCK_OCCUPIED )
+		state = SIGASP_STOP;
+	else if( next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED )
+		state = SIGASP_STOP_AND_PROCEED;
+	else if ( next_state ==# SIGASP_RESTRICTING )
+		state = SIGASP_RESTRICTING;
+	else if ( next_state ==# SIGASP_APPROACH_1 )
+		state = SIGASP_APPROACH_1;
+	else if ( next_state ==# SIGASP_APPROACH_2 )
+		state = SIGASP_APPROACH_2;
+	else if ( next_state ==# SIGASP_APPROACH_3 )
+		state = SIGASP_APPROACH_3;
+	else if ( next_state ==# SIGASP_CLEAR_1 )
+		state = SIGASP_CLEAR_1;
+	else state = SIGASP_CLEAR_2;
+
+	draw_state = def_draw_state (state);
+/////////////////////////////////////////////////////////////////////
+SCRIPT N7Clear40
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER3))) && enabled )
+	{
+		this_state = this_sig_lr (SIGFN_DISTANCE);
+
+		
+		if ( ( !route_set() && sig_feature (SIGFEAT_USER1) ) || sig_feature (SIGFEAT_USER2) )
+		{
+			state = SIGASP_APPROACH_1;
+			if(this_state ==# -1) draw_state = 3;
+			else draw_state = 2;				
+		}
+		else
+		{
+			if(this_state !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED))
+			{
+				state = SIGASP_RESTRICTING;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+			state = SIGASP_CLEAR_2;
+			if(this_state ==# -1) draw_state = 1;
+			else draw_state = 4;
+			}
+		}
+	}
+	else
+	{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+	}
+
+/////////////////////////////////////////////////////////////////////
+SCRIPT M5Clear40
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER3))) && enabled )
+	{
+		this_state = this_sig_lr (SIGFN_DISTANCE);
+
+		
+		if ( ( !route_set() && sig_feature (SIGFEAT_USER1) ) || sig_feature (SIGFEAT_USER2) )
+		{
+			state = SIGASP_APPROACH_1;
+			if(this_state ==# -1) draw_state = 3;
+			else draw_state = 2;				
+		}
+		else
+		{
+			if(this_state !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED))
+			{
+				state = SIGASP_RESTRICTING;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+			state = SIGASP_CLEAR_2;
+			if(this_state ==# -1) draw_state = 1;
+			else draw_state = 4;
+			}
+		}
+	}
+	else
+	{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+	}
+
+/////////////////////////////////////////////////////////////////////
+SCRIPT T5Clear40
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER3))) && enabled )
+	{
+		this_state = this_sig_lr (SIGFN_DISTANCE);
+
+		if ( ( !route_set() && sig_feature (SIGFEAT_USER1) ) || sig_feature (SIGFEAT_USER2) )
+		{
+			state = SIGASP_APPROACH_1;
+			if(this_state ==# -1) draw_state = 3;
+			else draw_state = 2;				
+		}
+		else
+		{
+			if(this_state !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED))
+			{
+			state = SIGASP_RESTRICTING;
+			draw_state = def_draw_state (state);
+			}
+			else 
+			{
+			state = SIGASP_CLEAR_2;
+			if(this_state ==# -1) draw_state = 1;
+			else draw_state = 4;
+			}
+		}
+	}
+	else
+	{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+	}
+
+/////////////////////////////////////////////////////////////////////
+SCRIPT N7Clear
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			if(this_state !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED ||
+							 next_state ==# SIGASP_APPROACH_1 || next_state ==# SIGASP_APPROACH_2 ||
+							 next_state ==# SIGASP_APPROACH_3 || next_state ==# SIGASP_CLEAR_1))
+			{
+				state = SIGASP_RESTRICTING;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_CLEAR_2;
+				if(this_state ==# -1) draw_state = 2;
+				else draw_state = 3;
+			}
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 3;
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT N7Limit40
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			state = SIGASP_APPROACH_1;
+			if(this_state ==# -1) draw_state = 3;
+			else draw_state = 2;
+			
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 4;
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT N7Limit60
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+			if(this_rstate !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED || 
+						        next_state ==# SIGASP_APPROACH_1))
+			{
+				state = SIGASP_APPROACH_1;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_APPROACH_2;
+				if(this_state ==# -1) draw_state = 4;
+				else draw_state = 3;
+			}
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 5;
+/////////////////////////////////////////////////////////////////////////////////////////
+SCRIPT N7Limit80
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+			if(this_rstate !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED || 
+						        next_state ==# SIGASP_APPROACH_1))
+			{
+				state = SIGASP_APPROACH_1;
+				draw_state = def_draw_state (state);
+			}
+			else if(this_rstate !=# -1 && (next_state ==# SIGASP_APPROACH_2))
+			{
+				state = SIGASP_APPROACH_2;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_APPROACH_3;
+				if(this_state ==# -1) draw_state = 4;
+				else draw_state = 3;
+			}
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 5;	
+///////////////////////////////////////////
+SCRIPT N7Limit100
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	float		this_rstate;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+			if(this_rstate !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED || 
+						        next_state ==# SIGASP_APPROACH_1))
+			{
+				state = SIGASP_APPROACH_1;
+				draw_state = def_draw_state (state);
+			}
+			else if(this_rstate !=# -1 && (next_state ==# SIGASP_APPROACH_2))
+			{
+				state = SIGASP_APPROACH_2;
+				draw_state = def_draw_state (state);
+			}
+			else if(this_rstate !=# -1 && (next_state ==# SIGASP_APPROACH_3))
+			{
+				state = SIGASP_APPROACH_3;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_CLEAR_1;
+				if(this_state ==# -1) draw_state = 4;
+				else draw_state = 3;
+			}
+		}
+		else
+		{
+			this_rstate = this_sig_lr (SIGFN_REPEATER);
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		this_rstate = this_sig_lr (SIGFN_REPEATER);
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 5;	
+////////////////////////////////////////////////////////////
+SCRIPT N7Distance60100
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED ) 
+		&& ( next_state ==# SIGASP_APPROACH_2 || next_state ==# SIGASP_CLEAR_1 )) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_1 )
+		{
+			state = SIGASP_CLEAR_1;
+			draw_state = def_draw_state (state);
+		}
+		else if ( next_state ==# SIGASP_APPROACH_2 )
+		{
+			state = SIGASP_APPROACH_2;
+			draw_state = def_draw_state (state);
+		}
+		else	draw_state = 0;
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////
+SCRIPT N7Distance4080
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED )
+		&& !(next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2)) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING )
+		{
+			state = SIGASP_CLEAR_2;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_3 )
+		{
+			state = SIGASP_APPROACH_3;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_1 )
+		{
+			state = SIGASP_APPROACH_1;
+		}
+		else 
+		{
+			state = SIGASP_RESTRICTING;
+		}
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////////////
+SCRIPT N7Shunting
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	enabled;
+	extern float	draw_state;
+	extern float 	route_set();
+	extern float	this_sig_lr ();
+
+	float 		this_rstate;
+
+	this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+	if( route_set() )
+	{
+		if ( ( block_state() ==# BLOCK_CLEAR ) && enabled )
+		{
+			
+			state = SIGASP_STOP_AND_PROCEED;
+			if(this_rstate ==# -1) draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 4;
+////////////////////////////////////////////////////////////////////
+SCRIPT N7Restrict30
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+
+	float		next_state;
+	float 		this_rstate;
+
+	this_rstate = this_sig_lr (SIGFN_REPEATER);
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			state = SIGASP_STOP_AND_PROCEED;
+			if(this_rstate ==# -1) draw_state = 2;
+			else draw_state = 3;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			if(this_rstate ==# -1) draw_state = 0;
+			else draw_state = 1;
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		if(this_rstate ==# -1) draw_state = 0;
+		else draw_state = 1;
+		}
+	else draw_state = 4;
+////////////////////////////////////////////////////////////////////
+SCRIPT BFSignal
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float next_state;
+
+	next_state = next_sig_lr (SIGFN_NORMAL);
+	if( block_state() ==# BLOCK_OCCUPIED )
+		state = SIGASP_STOP;
+	else if( next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED )
+		state = SIGASP_STOP_AND_PROCEED;
+	else if ( next_state ==# SIGASP_RESTRICTING )
+		state = SIGASP_RESTRICTING;
+	else if ( next_state ==# SIGASP_APPROACH_1 )
+		state = SIGASP_APPROACH_1;
+	else if ( next_state ==# SIGASP_APPROACH_2 )
+		state = SIGASP_APPROACH_2;
+	else if ( next_state ==# SIGASP_APPROACH_3 )
+		state = SIGASP_APPROACH_3;
+	else if ( next_state ==# SIGASP_CLEAR_1 )
+		state = SIGASP_CLEAR_1;
+	else state = SIGASP_CLEAR_2;
+
+	draw_state = def_draw_state (state);
+/////////////////////////////////////////////////////////////////////
+SCRIPT N3DistanceRep
+
+	extern float	def_draw_state ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED ))
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////
+SCRIPT N7DistanceRep
+
+	extern float	def_draw_state ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED && this_state !=# SIGASP_CLEAR_2))
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////
+SCRIPT T5Clear
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			if(this_state !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED ||
+							 next_state ==# SIGASP_APPROACH_1 || next_state ==# SIGASP_APPROACH_2 ||
+							 next_state ==# SIGASP_APPROACH_3 || next_state ==# SIGASP_CLEAR_1))
+			{
+				state = SIGASP_RESTRICTING;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_CLEAR_2;
+				if(this_state ==# -1) draw_state = 1;
+				else draw_state = 2;
+			}		
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			draw_state = def_draw_state (state);
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 2;
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT T5Limit40
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+	
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			state = SIGASP_APPROACH_1;
+			if(this_state ==# -1) draw_state = 2;
+			else draw_state = 1;
+			
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			draw_state = def_draw_state (state);
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 3;
+////////////////////////////////////////////////////////////
+SCRIPT T5Distance60100
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED ) 
+		&& ( next_state ==# SIGASP_APPROACH_2 || next_state ==# SIGASP_CLEAR_1 )) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_1 )
+		{
+			state = SIGASP_CLEAR_1;
+			draw_state = def_draw_state (state);
+		}
+		else if ( next_state ==# SIGASP_APPROACH_2 )
+		{
+			state = SIGASP_APPROACH_2;
+			draw_state = def_draw_state (state);
+		}
+		else	draw_state = 0;
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////
+SCRIPT T5Distance4080
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED )
+		&& !(next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2)) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING )
+		{
+			state = SIGASP_CLEAR_2;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_3 )
+		{
+			state = SIGASP_APPROACH_3;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_1 )
+		{
+			state = SIGASP_APPROACH_1;
+		}
+		else 
+		{
+			state = SIGASP_RESTRICTING;
+		}
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////////////
+SCRIPT T5Shunting
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	enabled;
+	extern float	draw_state;
+	extern float 	route_set();
+	extern float	this_sig_lr ();
+
+	if( route_set() )
+	{
+		if ( ( block_state() ==# BLOCK_CLEAR ) && enabled )
+		{
+			state = SIGASP_STOP_AND_PROCEED;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+		}
+		draw_state = def_draw_state (state);	
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 2;
+////////////////////////////////////////////////////////////////////
+SCRIPT T5Restrict30
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+
+	float		next_state;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			state = SIGASP_STOP_AND_PROCEED;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+		}
+		draw_state = def_draw_state (state);	
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 2;
+////////////////////////////////////////////////////////////////////////
+SCRIPT N4Clear
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			if(this_state !=# -1 && (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED ||
+							 next_state ==# SIGASP_APPROACH_1 || next_state ==# SIGASP_APPROACH_2 ||
+							 next_state ==# SIGASP_APPROACH_3 || next_state ==# SIGASP_CLEAR_1))
+			{
+				state = SIGASP_RESTRICTING;
+				draw_state = def_draw_state (state);
+			}
+			else
+			{
+				state = SIGASP_CLEAR_2;
+				if(this_state ==# -1) draw_state = 1;
+				else draw_state = 2;
+			}
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			draw_state = def_draw_state (state);
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 2;
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT N4Limit40
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			state = SIGASP_APPROACH_1;
+			if(this_state ==# -1) draw_state = 2;
+			else draw_state = 1;
+			
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			draw_state = def_draw_state (state);
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 3;
+////////////////////////////////////////////////////////////
+SCRIPT N4Limit40V2
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+
+	float		next_state;
+	float		this_state;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			this_state = this_sig_lr (SIGFN_DISTANCE);
+			
+			state = SIGASP_APPROACH_1;
+			if(this_state ==# -1) draw_state = 2;
+			else draw_state = 1;
+			
+		}
+		else
+		{
+			state = SIGASP_STOP;
+			draw_state = def_draw_state (state);
+		}
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 3;
+////////////////////////////////////////////////////////////
+SCRIPT N4Shunting
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	enabled;
+	extern float	draw_state;
+	extern float 	route_set();
+	extern float	this_sig_lr ();
+
+	if( route_set() )
+	{
+		if ( ( block_state() ==# BLOCK_CLEAR ) && enabled )
+		{
+			state = SIGASP_STOP_AND_PROCEED;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+		}
+		draw_state = def_draw_state (state);	
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 2;
+////////////////////////////////////////////////////////////////////
+SCRIPT N4Restrict30
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	enabled;
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+
+	float		next_state;
+
+	if( route_set() )
+	{
+		next_state = next_sig_lr (SIGFN_NORMAL);
+		if ( (block_state() ==# BLOCK_CLEAR && !(next_state ==# SIGASP_STOP && sig_feature (SIGFEAT_USER1))) && enabled )
+		{
+			state = SIGASP_STOP_AND_PROCEED;
+		}
+		else
+		{
+			state = SIGASP_STOP;
+		}
+		draw_state = def_draw_state (state);	
+	}
+	else if( !enabled )
+		{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+		}
+	else draw_state = 2;
+///////////////////////////////////////////////////////
+SCRIPT N4DistanceRep
+
+	extern float	def_draw_state ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED && this_state !=# SIGASP_CLEAR_2))
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+///////////////////////////////////////////////////////
+SCRIPT N4DistanceRepV2
+
+	extern float	def_draw_state ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED && this_state !=# SIGASP_CLEAR_2))
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+///////////////////////////////////////////////////////
+SCRIPT H2Block
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+	
+	if (  block_state() ==# BLOCK_CLEAR )
+	{
+		state = SIGASP_CLEAR_2;
+	}
+	else
+	{
+		state = SIGASP_STOP;
+	}
+	draw_state = def_draw_state (state);
+	
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT N2Distance60100
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED ) 
+		&& ( next_state ==# SIGASP_APPROACH_2 || next_state ==# SIGASP_CLEAR_1 )) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_1 )
+		{
+			state = SIGASP_CLEAR_1;
+			draw_state = def_draw_state (state);
+		}
+		else if ( next_state ==# SIGASP_APPROACH_2 )
+		{
+			state = SIGASP_APPROACH_2;
+			draw_state = def_draw_state (state);
+		}
+		else	draw_state = 0;
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////
+SCRIPT N2Distance4080
+
+	extern float	def_draw_state ();
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( (this_state !=# SIGASP_STOP && this_state !=# SIGASP_STOP_AND_PROCEED )
+		&& !(next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2)) 
+	{
+		if ( next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING )
+		{
+			state = SIGASP_CLEAR_2;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_3 )
+		{
+			state = SIGASP_APPROACH_3;
+		}
+		else if ( next_state ==# SIGASP_APPROACH_1 )
+		{
+			state = SIGASP_APPROACH_1;
+		}
+		else 
+		{
+			state = SIGASP_RESTRICTING;
+		}
+		draw_state = def_draw_state (state);
+	}
+	else	draw_state = 0;
+////////////////////////////////////////////////////////////
+SCRIPT N2Shunting
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	enabled;
+	extern float	draw_state;
+
+	if ( ( block_state() ==# BLOCK_CLEAR ) && enabled )
+	{
+		state = SIGASP_STOP_AND_PROCEED;
+	}
+	else
+	{
+		state = SIGASP_STOP;
+	}
+	draw_state = def_draw_state (state);	
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT N2ShuntImit
+
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	state = SIGASP_STOP;
+	draw_state = def_draw_state (state);	
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT T2Shunting
+
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	enabled;
+	extern float	draw_state;
+
+	if ( ( block_state() ==# BLOCK_CLEAR ) && enabled )
+	{
+		state = SIGASP_STOP_AND_PROCEED;
+	}
+	else
+	{
+		state = SIGASP_STOP;
+	}
+	draw_state = def_draw_state (state);	
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT T2ShuntImit
+
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	state = SIGASP_STOP;
+	draw_state = def_draw_state (state);	
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT N1Stop
+
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	state = SIGASP_STOP;
+
+	draw_state = def_draw_state (state);
+///////////////////////////////////////////////////////////////////////////////////////
+SCRIPT A3PAutoA
+
+	extern float	block_state ();
+	extern float	next_sig_lr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+	
+	float	next_state;
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( block_state() !=# BLOCK_CLEAR )
+	{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+	}
+	else if (next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING)
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else
+	{
+		state = SIGASP_RESTRICTING;
+		if (next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2 )
+		{
+			draw_state = 5;
+		}
+		else if (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED )
+		{
+			draw_state = 2;
+		}
+		else if (next_state ==# SIGASP_APPROACH_1)
+		{
+			draw_state = 3;
+		}
+		else if (next_state ==# SIGASP_APPROACH_3)
+		{
+			draw_state = 4;
+		}
+	}
+///////////////////////////////////////////////////////////////////////////////
+SCRIPT A3PAutoB
+
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	
+	float	next_state;
+	float this_state;
+
+	next_state = next_sig_lr (SIGFN_NORMAL);
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	
+	if (this_state != SIGASP_STOP)
+	{
+		if (next_state ==# SIGASP_APPROACH_2)
+		{
+			draw_state = 1;
+		}
+		else if (next_state ==# SIGASP_CLEAR_1)
+		{
+			draw_state = 2;
+		}
+		else draw_state = 0;
+	}
+	else draw_state = 0;
+///////////////////////////////////////////////////////////////////////////////
+SCRIPT A3LAutoA
+
+	extern float	block_state ();
+	extern float	next_sig_lr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+	
+	float	next_state;
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( block_state() !=# BLOCK_CLEAR )
+	{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+	}
+	else if (next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING)
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else
+	{
+		state = SIGASP_RESTRICTING;
+		if (next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2 )
+		{
+			draw_state = 5;
+		}
+		else if (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED )
+		{
+			draw_state = 2;
+		}
+		else if (next_state ==# SIGASP_APPROACH_1)
+		{
+			draw_state = 3;
+		}
+		else if (next_state ==# SIGASP_APPROACH_3)
+		{
+			draw_state = 4;
+		}
+	}
+///////////////////////////////////////////////////////////////////////////////
+SCRIPT A3LAutoB
+
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	
+	float	next_state;
+	float this_state;
+
+	next_state = next_sig_lr (SIGFN_NORMAL);
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	
+	if (this_state != SIGASP_STOP)
+	{
+		if (next_state ==# SIGASP_APPROACH_2)
+		{
+			draw_state = 1;
+		}
+		else if (next_state ==# SIGASP_CLEAR_1)
+		{
+			draw_state = 2;
+		}
+		else draw_state = 0;
+	}
+	else draw_state = 0;
+///////////////////////////////////////////////////////////////////////////////
+SCRIPT A3DAutoFA
+
+	extern float	block_state ();
+	extern float	next_sig_lr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+	
+	float	next_state;
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( block_state() !=# BLOCK_CLEAR )
+	{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+	}
+	else if (next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING)
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else
+	{
+		state = SIGASP_RESTRICTING;
+		if (next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2 )
+		{
+			draw_state = 5;
+		}
+		else if (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED )
+		{
+			draw_state = 2;
+		}
+		else if (next_state ==# SIGASP_APPROACH_1)
+		{
+			draw_state = 3;
+		}
+		else if (next_state ==# SIGASP_APPROACH_3)
+		{
+			draw_state = 4;
+		}
+	}
+///////////////////////////////////////////////////////////////////////////////
+SCRIPT A3DAutoFB
+
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	
+	float	next_state;
+	float this_state;
+
+	next_state = next_sig_lr (SIGFN_NORMAL);
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	
+	if (this_state != SIGASP_STOP)
+	{
+		if (next_state ==# SIGASP_APPROACH_2)
+		{
+			draw_state = 1;
+		}
+		else if (next_state ==# SIGASP_CLEAR_1)
+		{
+			draw_state = 2;
+		}
+		else draw_state = 0;
+	}
+	else draw_state = 0;
+///////////////////////////////////////////////////////////////////////////////
+SCRIPT A3DAutoBA
+
+	extern float	block_state ();
+	extern float	next_sig_lr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+	
+	float	next_state;
+	next_state = next_sig_lr (SIGFN_NORMAL);
+
+	if ( block_state() !=# BLOCK_CLEAR )
+	{
+		state = SIGASP_STOP;
+		draw_state = def_draw_state (state);
+	}
+	else if (next_state ==# SIGASP_CLEAR_2 || next_state ==# SIGASP_RESTRICTING)
+	{
+		state = SIGASP_CLEAR_2;
+		draw_state = def_draw_state (state);
+	}
+	else
+	{
+		state = SIGASP_RESTRICTING;
+		if (next_state ==# SIGASP_CLEAR_1 || next_state ==# SIGASP_APPROACH_2 )
+		{
+			draw_state = 5;
+		}
+		else if (next_state ==# SIGASP_STOP || next_state ==# SIGASP_STOP_AND_PROCEED )
+		{
+			draw_state = 2;
+		}
+		else if (next_state ==# SIGASP_APPROACH_1)
+		{
+			draw_state = 3;
+		}
+		else if (next_state ==# SIGASP_APPROACH_3)
+		{
+			draw_state = 4;
+		}
+	}
+///////////////////////////////////////////////////////////////////////////////
+SCRIPT A3DAutoBB
+
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+	
+	float	next_state;
+	float this_state;
+
+	next_state = next_sig_lr (SIGFN_NORMAL);
+	this_state = this_sig_lr (SIGFN_NORMAL);
+	
+	if (this_state != SIGASP_STOP)
+	{
+		if (next_state ==# SIGASP_APPROACH_2)
+		{
+			draw_state = 1;
+		}
+		else if (next_state ==# SIGASP_CLEAR_1)
+		{
+			draw_state = 2;
+		}
+		else draw_state = 0;
+	}
+	else draw_state = 0;
+
