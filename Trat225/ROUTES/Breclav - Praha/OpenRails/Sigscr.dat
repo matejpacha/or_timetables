@@ -1699,18 +1699,28 @@ SCRIPT N50BI
 	extern float	draw_state;
 	extern float	def_draw_state ();
 
+	extern float TrainHasCallOn();
+
 	float			next_nor;
 	next_nor = next_sig_lr (SIGFN_NORMAL);
 
-	if ( !enabled || !route_set () ||
-		block_state () !=# 0 ||
-		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
-	state = 0;
-	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
-	state = 1;
-	else state = 3;
+	if ((block_state () == #BLOCK_OCCUPIED) && TrainHasCallOn())
+	{
+		state = 3;
+	}
+	else
+	{	
+		if ( !enabled || !route_set () ||
+			block_state () !=# 0 ||
+			( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+			state = 0;
+		else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+			state = 1;
+		else state = 3;
 
-	draw_state = def_draw_state (state);
+
+	}
+	draw_state = def_draw_state (state);	
 
 
 SCRIPT N60UR
@@ -2282,9 +2292,9 @@ SCRIPT NAV7A
 
 	state = this_nor;
 	
-	if (((block_state () == #BLOCK_OCCUPIED)) && TrainHasCallOn())
+	if ((block_state () == #BLOCK_OCCUPIED) && TrainHasCallOn())
 	{
-		state = SIGASP_STOP_AND_PROCEED;
+		signal = SIGASP_STOP_AND_PROCEED;
 		draw_state = 3;
 	}
 	else if ( this_nor ==# 0 )
