@@ -2075,12 +2075,22 @@ SCRIPT POSUN
 	extern float	state;
 	extern float	draw_state;
 	extern float	def_draw_state ();
+	extern float TrainHasCallOn();
 
-	if ( !enabled || !route_set () || block_state () ==# 2 ||
-		( block_state () !=# 0 && !sig_feature (SIGFEAT_USER4) ) )
-	state = 0;
-	else state = 1;
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
 
+	if ((block_state () == #BLOCK_OCCUPIED) && TrainHasCallOn())
+	{
+		state = 1;
+	}
+	else
+	{
+		if ( !enabled || !route_set () || block_state () ==# 2 ||
+			( block_state () !=# 0 && !sig_feature (SIGFEAT_USER4) ) )
+		state = 0;
+		else state = 1;
+	}
 	draw_state = def_draw_state (state);
 
 
