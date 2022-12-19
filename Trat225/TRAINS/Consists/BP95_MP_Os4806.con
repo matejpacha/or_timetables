@@ -1,0 +1,31 @@
+SIMISA@@@@@@@@@@JINX0D0t______
+
+Train (
+	TrainCfg ( BP95_MP_Os4806
+                Name ( "BP95_MP_Os4806 2005" )
+		Serial ( 1 )
+		MaxVelocity ( 60.00000 1.00000 )
+		NextWagonUID ( 7 )
+		Durability ( 1.00000 )
+		Engine (
+			UiD ( 1 )
+			EngineData ( cd_750706 cd_7507 )
+		)
+		Wagon (
+			WagonData ( bdmtee cd_Bdmtee )
+			UiD ( 2 )
+		)
+                Wagon (
+			WagonData ( CD_Bdmtee cd_Bdmtee )
+			UiD ( 3 )
+		)
+                Wagon (
+			WagonData ( CD_Bdmtee_208 cd_Bdmtee )
+			UiD ( 4 )
+		)
+                Wagon (
+			WagonData ( CD_Bdmtee_graffiti cd_Bdmtee )
+			UiD ( 5 )
+		)
+	)
+)

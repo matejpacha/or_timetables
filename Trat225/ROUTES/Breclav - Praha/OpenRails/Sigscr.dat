@@ -1783,17 +1783,25 @@ SCRIPT N40
 	extern float	state;
 	extern float	draw_state;
 	extern float	def_draw_state ();
+	extern float TrainHasCallOn();
 
 	float			next_nor;
 	next_nor = next_sig_lr (SIGFN_NORMAL);
 
-	if ( !enabled || !route_set () ||
-		block_state () !=# 0 ||
-		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
-	state = 0;
-	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
-	state = 1;
-	else state = 3;
+	if ((block_state () == #BLOCK_OCCUPIED) && TrainHasCallOn())
+	{
+		state = 3;
+	}
+	else
+	{
+		if ( !enabled || !route_set () ||
+			block_state () !=# 0 ||
+			( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+		state = 0;
+		else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+		state = 1;
+		else state = 3;
+	}
 
 	draw_state = def_draw_state (state);
 
@@ -1935,17 +1943,24 @@ SCRIPT NPP
 	extern float	state;
 	extern float	draw_state;
 	extern float	def_draw_state ();
+	extern float TrainHasCallOn();
 
 	float			next_nor;
 	next_nor = next_sig_lr (SIGFN_NORMAL);
 
-	if ( !enabled || !route_set () ||
-		block_state () !=# 0 ||
-		( sig_feature (SIGFEAT_GRADIENT_PLATE)  &&
-		sig_feature (SIGFEAT_USER4) && next_nor ==# 0 ) )
-	state = 0;
-	else state = 1;
-
+	if ((block_state () == #BLOCK_OCCUPIED) && TrainHasCallOn())
+	{
+		state = 3;
+	}
+	else
+	{
+		if ( !enabled || !route_set () ||
+			block_state () !=# 0 ||
+			( sig_feature (SIGFEAT_GRADIENT_PLATE)  &&
+			sig_feature (SIGFEAT_USER4) && next_nor ==# 0 ) )
+		state = 0;
+		else state = 1;
+	}
 	draw_state = def_draw_state (state);
 
 

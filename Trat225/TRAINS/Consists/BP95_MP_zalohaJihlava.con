@@ -1,0 +1,15 @@
+?SIMISA@@@@@@@@@@JINX0D0t______
+
+Train (
+	TrainCfg ( BP95_MP_zalohaJihlava
+		Name ( "BP95_MP_zalohaJihlava" )
+		Serial ( 2 )
+		MaxVelocity ( 33.33333 0.77127 )
+		NextWagonUID ( 1 )
+		Durability ( 1.00000 )
+		Engine (
+			UiD ( 0 )
+			EngineData ( 210027 cd_210 )
+		)
+	)
+)
