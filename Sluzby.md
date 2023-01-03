@@ -44,3 +44,16 @@ Proveďte zkoušku brzdy (menu F5, tlak v potrubí na 4,7b, odbrzdit + zkouška 
 
 Služba oficiálně "končí" v Havlíčkově Brodě. Cesta je zabezpečená do Okrouhlice, nicméně lze pokračovat dál (nemám vyzkoušeno).
 
+Okolní provoz:
+- před manipulákem jede na Budějovice uhlí, nicméně hráč se s ním "nepotká"
+- V Dobroníně je plánováno křižování s Vn47506
+- V Jihlavě manipulák přebírá 742 směr Jemnice (odjezd v 4:25)
+- Plánovaný odjezd Pn68200 z Jihlavy v 4:00
+- Plánovaný průjezd Vn47534 z Jihlavy v 4:14
+- Odjezd Os14830 z Jihlavy v 4:33
+- Příjezd Os8330 do Jihlavy v 4:53
+- Křižování s Os5931 v Dobroníně
+- Průjezd Rn44743 v Havlíčkově Brodě
+- Příjezd a obrat Pn62801 v Havlíčkově Brodě
+- Plánované míjení s Os5933 mezi HavlBrodem a Okrouhlicí
+
