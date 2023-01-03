@@ -28,9 +28,10 @@ Ano - stačí mi napsat, že máte zájem. Ať už jako testeři, anebo jako př
 Opustil jsem Openrails Timetable Editor, protože neumožňuje slušnou práci s tabulkami. Takže nastoupil Excel postavený čistě na vzorcích. Obsahuje pouze jedno makro, které ukládá výsledný soubor. Šikovní si jistě upraví podle potřeby, nešikovní můžou makra zakázat a používat Ctrl+C/Ctrl+V s následnou úpravou do formátu odděleného ";" (ale neručím za funkčnost ručního postupu - např. v briefingu se může objevit čárka a její následné nahrazení středníkem udělá v timetable paseku. Proto je Makro lepší, ale musíte mu "věřit").
 A sdílený obsah používejte dle uvážení. Pokud by vás nedejbože napadlo zveřejnit vlastní klon tohoto TT, potěší mě poděkování.
 
+## Popis služeb
+Ten najdete v souboru [Sluzby](Sluzby.md). Věřím, že si jízdy užijete.
+
 ## Stručný troubleshooting:
 - OR nevidí Timetable: zkontrolujte umístění souboru
 - Při spuštění OR skončí s chybou: Přečtěte si chybovou hlášku a postupujte přiměřeně jejímu znění. Pokud z ní nejste moudří, otevřete si soubor OpenRailsLog.txt na ploše - hledejte někde na konci. Pokud ani z toho nejste moudří, hledejte chyby v consistech - chybějící vozidla, atd.
 - Při jízdě došlo ke konfliktu (jízda proti druhému vlaku, nevybavené návěstidlo, atd.) - zkuste se na GitHubu vrátit o jednu verzi zpět, případně podle logu zkuste dohledat změny týkající se vašeho vlaku a jízdu opakujte. Aktualizací mohlo dojít k narušení provozu jiného vlaku.
-
-
