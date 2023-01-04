@@ -57,3 +57,30 @@ Okolní provoz:
 - Příjezd a obrat Pn62801 v Havlíčkově Brodě
 - Plánované míjení s Os5933 mezi HavlBrodem a Okrouhlicí
 
+<!--
+## Ranní osobák do Brna
+První ranní osobák do Brna budeme přistavovat ke 2. nástupišti. Služba začíná nástupem na lokomotivu (vlak "Os4803_nastup", nejlépe v režimu Cold&Dark) na koleji 3a. Po oživení lokomotivy vytáhneme soupravu z 19. koleje a přistavíme ke 2. nástupišti. Soupravu objedeme a zapneme vytápění / dobíjení soupravy. Toto by mělo být dokončeno před 3:25, kdy je plánovaný průjezd nákladního vlaku.
+Provedeme zkoušku brzdy.
+
+Nástup lze přeskočit výběrem vlaku "Os4803".
+
+- Číslo vlaku: Os4803
+- Hmotnost soupravy: 342t
+- Délka soupravy: 163m
+- Počet vozů: 3
+- Počet náprav: 16 (16 náprav pro ARR)
+- Režim brzdy: R
+- Brzdná hmotnost: 424 t
+- Brzdící procenta: 123% (potřebná Bp = 62%)
+- Nejvyšší dovolená rychlost: 80km/h
+
+Služba oficiálně končí v Třebíči, nicméně lze dojet až do Brna.
+
+Okolní provoz:
+- Plánovaný příjezd Pn68200 v 3:05 (odjezd v 4:00)
+- Průjezd Vn47506 v 3:25
+- Průjezd Pn47537 v 3:45
+- Příjezd Mn82741 v 3:55 a následná manipulace
+- Křižování s Os4872 v Okříškách
+
+-->
