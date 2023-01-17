@@ -35,3 +35,7 @@ Ten najdete v souboru [Sluzby](Sluzby.md). Věřím, že si jízdy užijete.
 - OR nevidí Timetable: zkontrolujte umístění souboru
 - Při spuštění OR skončí s chybou: Přečtěte si chybovou hlášku a postupujte přiměřeně jejímu znění. Pokud z ní nejste moudří, otevřete si soubor OpenRailsLog.txt na ploše - hledejte někde na konci. Pokud ani z toho nejste moudří, hledejte chyby v consistech - chybějící vozidla, atd.
 - Při jízdě došlo ke konfliktu (jízda proti druhému vlaku, nevybavené návěstidlo, atd.) - zkuste se na GitHubu vrátit o jednu verzi zpět, případně podle logu zkuste dohledat změny týkající se vašeho vlaku a jízdu opakujte. Aktualizací mohlo dojít k narušení provozu jiného vlaku.
+
+## Upozornění
+- OpenRails je háklivý na zrychlení času - při hodnotách větších než cca 500% se timetable nechová korektně
+- U některých vlaků, které vznikají z předchůdců (tzn. lokomotiva nastupuje z depa, najíždí na soupravu a vytvoří vlak) pozoruji neočekávané pády Openrails. Pokusím se postupně zkoušet, ale pokud vyjdete z popisu [Sluzby](Sluzby.md), tak by to mělo fungovat správně.
