@@ -115,7 +115,7 @@ Okolní provoz:
 - Příjezd Mn82741 v 3:55 a následná manipulace
 - Křižování s Os4872 v Okříškách
 
-<!--
+
 ## Ranní "hradečák" (vlak MR980_nastup)
 Nástup v "bezpečně" ranních hodinách (nejlépe v režimu Cold&Dark) začíná přistavením soupravy k nástupišti. Následné vyčkávání k odjezdu na 13k dává prostor k vyplnění dokumentů a kontrole rozkazu. Nejsou očekávané žádné komplikace, takže jízda je rychlá a nudná. Vzhledem ke stavu trati BP jízda končí v Havlíčkově Brodě.
 
@@ -132,5 +132,9 @@ Nástup v "bezpečně" ranních hodinách (nejlépe v režimu Cold&Dark) začín
 Služba oficiálně končí v Havlíčkově Brodě.
 
 Okolní provoz:
-- 
--->
+- Pn68210 čekající na odjezd v Jihlavě
+- Lokomotiva pro R667 a její posun
+- R667 - příjezd v  8:31 od Veselí n.L. a úvraťový přepřah
+- Křižování s Os8335 s příjezdem v 8:34
+- Křižování s Pn47543 v Dobroníně
+- Křižování s R981 v Havlíčkově Brodě
