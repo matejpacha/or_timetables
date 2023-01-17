@@ -3,7 +3,7 @@
 -->
 
 # Popis služeb v TT
-## Ranní na Esu
+## Ranní na Esu (vlak Mn82741)
 Nastupujete na ranní manipulák z Havlíčkova Brodu do Jihlavy. Lokomotiva 363 078-7 poveze zátěž typu S o hmotnosti 550,6t. Souprava je připojená. 
 Po načtení simulace zkontrolujte stav bzrd jednotlivých vozů (náhodné poruchy brzd v OR CZSK). Doporučuji přepočítat brzdná procenta.
 Při chladnějším počasí si nezapomeňte na stanovišti zatopit!
@@ -11,7 +11,7 @@ Cesta je bez mimořádností na trati.
 
 Je záhodno mít "nacvičeno" přechody mezi stanovišti, včetně obsluhy klíče k pultu, zabezpečovače, kompresorů, atd.
 
-- Číslo vlaku: Mn82741
+- Číslo vlaku: Mn82741 (vlak Mn82741)
 - Hmotnost soupravy: 637,6t
 - Délka soupravy: 268,988m
 - Počet vozů: 18
@@ -57,11 +57,11 @@ Okolní provoz:
 - Příjezd a obrat Pn62801 v Havlíčkově Brodě
 - Plánované míjení s Os5933 mezi HavlBrodem a Okrouhlicí
 
-## S manipulákem a 742 směr Jemnice
+## S manipulákem a 742 směr Jemnice (vlak Mn82741_nastupDepo)
 Nástup do služby je v 3:50 (nejlépe v režimu Cold&Dark) v depu na rampě vedle "strojmistrů". Poté jedete na kolej 101 (ranžírka na hranici depa), kde čekáte na odvěšení lokomotivy 363, která vám přivezla Mn82741 z Havlíčkova Brodu. Po povolení k posunu cca v 4:00 jedete na výtažnou kolej a točíte na vlak Mn82741. Provedete zjednodušenou zkoušku brzdy (souprava se nezměnila).
 Odjezd vlaku je v 4:25, takže je dost času na vyplnění dokumentů a na kávu v dopravní kanceláři (anebo aspoň z automatu). Během jízdy do stanice Okříšky (kde zatím trasa končí) křižujete v Lukách nad Jihlavou (křižování s Os4872, 23 minut) a v Bransouzích (křižování s Os4802, 18 minut), tam zastavte ještě před nástupišti, ať se cestující nemusí drát přes koleje).
 
-- Číslo vlaku: Mn82741
+- Číslo vlaku: Mn82741 (vlak Mn82741_nastupDepo)
 - Hmotnost soupravy: 637,6t
 - Délka soupravy: 268,988m
 - Počet vozů: 18
@@ -85,7 +85,7 @@ Okolní provoz:
 - průjezd vlaku Sp1661 v Okříškách
 
 
-## Ranní osobák do Brna
+## Ranní osobák do Brna (vlak Os4803_nastup)
 První ranní osobák do Brna budeme přistavovat ke 2. nástupišti. Služba začíná nástupem na lokomotivu (vlak "Os4803_nastup", nejlépe v režimu Cold&Dark) na koleji 3a. Po oživení lokomotivy vytáhneme soupravu z 19. koleje a přistavíme ke 2. nástupišti. Soupravu objedeme a zapneme vytápění / dobíjení soupravy. Toto by mělo být dokončeno před 3:25, kdy je plánovaný průjezd nákladního vlaku.
 Provedeme zkoušku brzdy.
 
@@ -94,9 +94,9 @@ Provedeme zkoušku brzdy.
 - *pro začátek s "nahozenou" mašinou: na začátku máte až zbytečně moc času. Úkony viz výše se minimalizují, proto tam budou nudné prostoje.*
 - *Obecně: některé návěsti neodpovídají režimu "posun", ale to už je vlastnost tratě BP. Posunujte i na návěsti pro jízdu vlaku. Určitě pomůže znalost místních poměrů a obvyklých manipulací.*
 
-Nástup lze přeskočit výběrem vlaku "Os4803".
+<!-- Nástup lze přeskočit výběrem vlaku "Os4803". -->
 
-- Číslo vlaku: Os4803
+- Číslo vlaku: Os4803 (vlak Os4803_nastup)
 - Hmotnost soupravy: 342t
 - Délka soupravy: 163m
 - Počet vozů: 3
@@ -114,3 +114,23 @@ Okolní provoz:
 - Průjezd Pn47537 v 3:45
 - Příjezd Mn82741 v 3:55 a následná manipulace
 - Křižování s Os4872 v Okříškách
+
+<!--
+## Ranní "hradečák" (vlak MR980_nastup)
+Nástup v "bezpečně" ranních hodinách (nejlépe v režimu Cold&Dark) začíná přistavením soupravy k nástupišti. Následné vyčkávání k odjezdu na 13k dává prostor k vyplnění dokumentů a kontrole rozkazu. Nejsou očekávané žádné komplikace, takže jízda je rychlá a nudná. Vzhledem ke stavu trati BP jízda končí v Havlíčkově Brodě.
+
+- Číslo vlaku: R980 (vlak MR980_nastup)
+- Hmotnost soupravy: 126t
+- Délka soupravy: 70.26m
+- Počet vozů: 2
+- Počet náprav: 12
+- Režim brzdy: R
+- Brzdná hmotnost: 
+- Brzdící procenta:
+- Nejvyšší dovolená rychlost: 80km/h
+
+Služba oficiálně končí v Havlíčkově Brodě.
+
+Okolní provoz:
+- 
+-->
