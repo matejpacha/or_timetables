@@ -58,7 +58,7 @@ Okolní provoz:
 - Plánované míjení s Os5933 mezi HavlBrodem a Okrouhlicí
 
 ## S manipulákem a 742 směr Jemnice
-Nástup do služby je v 3:50 (nejlépe v režimu Cold&Dark) v depu na rampě vedle administrativní budovy. Poté jedete na kolej 101 (ranžírka na hranici depa), kde čekáte na odvěšení lokomotivy 363, která vám přivezla Mn82741 z Havlíčkova Brodu. Po povolení k posunu cca v 4:00 jedete na výtažnou kolej a točíte na vlak Mn82741. Provedete zjednodušenou zkoušku brzdy (souprava se nezměnila).
+Nástup do služby je v 3:50 (nejlépe v režimu Cold&Dark) v depu na rampě vedle "strojmistrů". Poté jedete na kolej 101 (ranžírka na hranici depa), kde čekáte na odvěšení lokomotivy 363, která vám přivezla Mn82741 z Havlíčkova Brodu. Po povolení k posunu cca v 4:00 jedete na výtažnou kolej a točíte na vlak Mn82741. Provedete zjednodušenou zkoušku brzdy (souprava se nezměnila).
 Odjezd vlaku je v 4:25, takže je dost času na vyplnění dokumentů a na kávu v dopravní kanceláři (anebo aspoň z automatu). Během jízdy do stanice Okříšky (kde zatím trasa končí) křižujete v Lukách nad Jihlavou (křižování s Os4872, 23 minut) a v Bransouzích (křižování s Os4802, 18 minut), tam zastavte ještě před nástupišti, ať se cestující nemusí drát přes koleje).
 
 - Číslo vlaku: Mn82741
