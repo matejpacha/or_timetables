@@ -42,7 +42,7 @@ Proveďte zkoušku brzdy (menu F5, tlak v potrubí na 4,7b, odbrzdit + zkouška 
 - Brzdící procenta: 123% (potřebná Bp = 62%)
 - Nejvyšší dovolená rychlost: 80km/h
 
-Služba oficiálně "končí" v Havlíčkově Brodě. Cesta je zabezpečená do Okrouhlice, nicméně lze pokračovat dál (nemám vyzkoušeno).
+Služba oficiálně "končí" v Havlíčkově Brodě. Cesta je zabezpečená do Okrouhlice.
 
 Okolní provoz:
 - před manipulákem jede na Budějovice uhlí, nicméně hráč se s ním "nepotká"
@@ -57,10 +57,42 @@ Okolní provoz:
 - Příjezd a obrat Pn62801 v Havlíčkově Brodě
 - Plánované míjení s Os5933 mezi HavlBrodem a Okrouhlicí
 
-<!--
+## S manipulákem a 742 směr Jemnice
+Nástup do služby je v 3:50 (nejlépe v režimu Cold&Dark) v depu na rampě vedle administrativní budovy. Poté jedete na kolej 101 (ranžírka na hranici depa), kde čekáte na odvěšení lokomotivy 363, která vám přivezla Mn82741 z Havlíčkova Brodu. Po povolení k posunu cca v 4:00 jedete na výtažnou kolej a točíte na vlak Mn82741. Provedete zjednodušenou zkoušku brzdy (souprava se nezměnila).
+Odjezd vlaku je v 4:25, takže je dost času na vyplnění dokumentů a na kávu v dopravní kanceláři (anebo aspoň z automatu). Během jízdy do stanice Okříšky (kde zatím trasa končí) křižujete v Lukách nad Jihlavou (křižování s Os4872, 23 minut) a v Bransouzích (křižování s Os4802, 18 minut), tam zastavte ještě před nástupišti, ať se cestující nemusí drát přes koleje).
+
+- Číslo vlaku: Mn82741
+- Hmotnost soupravy: 637,6t
+- Délka soupravy: 268,988m
+- Počet vozů: 18
+- Počet náprav: 70 (45 náprav pro ARR)
+- Režim brzdy: P
+- Brzdná hmotnost: 225 t
+- Brzdící procenta: Nutno spočítat po revizi brzd (potřebná Bp = 49%)
+  - Pro Bp > 49% je možné jet až 65km/h
+  - Pro Bp > 35% je možné jet max 65km/h
+  - Pro Bp > 31% je možné jet max 60km/h
+  - Pro Bp > 25% je možné jet max 55km/h
+- Nejvyšší dovolená rychlost: 65km/h
+
+Služba oficiálně končí v Moravských Budějovicích.
+
+Okolní provoz:
+- nástup a odjezd vlaku Os4803 v Jihlavě
+- posun lokomotivy odstupující z Mn82741 a nastupující na R610
+- křižování s Os4872 v Lukách nad Jihlavou
+- křižování s Os4802 v Bransouzích
+- průjezd vlaku Sp1661 v Okříškách
+
+
 ## Ranní osobák do Brna
 První ranní osobák do Brna budeme přistavovat ke 2. nástupišti. Služba začíná nástupem na lokomotivu (vlak "Os4803_nastup", nejlépe v režimu Cold&Dark) na koleji 3a. Po oživení lokomotivy vytáhneme soupravu z 19. koleje a přistavíme ke 2. nástupišti. Soupravu objedeme a zapneme vytápění / dobíjení soupravy. Toto by mělo být dokončeno před 3:25, kdy je plánovaný průjezd nákladního vlaku.
 Provedeme zkoušku brzdy.
+
+**Pozn.:**
+- *pro začátek s "mrtvou" mašinou: po nahození bude chvilku trvat, než se dofoukají jímky. To je typicky čas na kontrolu "papírů". Soupravu vyzvedáváte přibližně v čase 3:08 - 3:10. Nějaký čas musíte věnovat kontrole a přípravě soupravy (brzdy, topení, bržděnka atd.). Vozmistr dá "povolení" k posunu nejdříve v 3:11. Po přistavení soupravy se počítá s časem cca 3:15 pro zahájení objetí soupravy.*
+- *pro začátek s "nahozenou" mašinou: na začátku máte až zbytečně moc času. Úkony viz výše se minimalizují, proto tam budou nudné prostoje.*
+- *Obecně: některé návěsti neodpovídají režimu "posun", ale to už je vlastnost tratě BP. Posunujte i na návěsti pro jízdu vlaku. Určitě pomůže znalost místních poměrů a obvyklých manipulací.*
 
 Nástup lze přeskočit výběrem vlaku "Os4803".
 
@@ -82,5 +114,3 @@ Okolní provoz:
 - Průjezd Pn47537 v 3:45
 - Příjezd Mn82741 v 3:55 a následná manipulace
 - Křižování s Os4872 v Okříškách
-
--->
