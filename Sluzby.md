@@ -138,3 +138,26 @@ Okolní provoz:
 - Křižování s Os8335 s příjezdem v 8:34
 - Křižování s Pn47543 v Dobroníně
 - Křižování s R981 v Havlíčkově Brodě
+
+## Rychlík R667 do Brna (vlak R667_nastupDepo)
+Na "lávce" si vyzvednete lokomotivu 754 047 (nejlépe v režimu Cold&Dark). Následuje přesun na kolej 101 (ranžírka na hranici depa), kde vyčkáte na povolení k posunu na výtažnou kolej. Posun je obvykle zahájen ještě před pravidelným příjezdem R667 od Českých Budějovic. Na soupravu najíždíte po jejím příjezdu bez zbytečných odkladů. Po najetí na soupravu je nutno zejména v zimních měsících zastavit spalovací motor kvůli připojení topné spojky. Proveďte zjednodušenou zkoušku brzdy (zkontrolujte i nastavení brzdičů a vlakového topení v jednotlivých vozech). Z Třebíče je v původním SJŘ zohledněna traťová rychlost 60km/h, ačkoliv v současné verzi tratě se zobrazí rychlost 80km/h - zvolte podle vlastního uvážení
+
+- Číslo vlaku: R667 (vlak R667_nastupDepo)
+- Hmotnost soupravy: 287.4t
+- Délka soupravy: 139m
+- Počet vozů: 5
+- Počet náprav: 24
+- Režim brzdy: R
+- Brzdná hmotnost: 368 t
+- Brzdící procenta: 128% (potřebná Bp=55%)
+- Nejvyšší dovolená rychlost: 100km/h
+
+Služba oficiálně končí v Třebíči, ale lze dojet až do Brna (ač bez časových údajů).
+
+Okolní provoz:
+- přistavení R980 k nástupišti a jeho následný odjezd směr Havlíčkův Brod
+- Pn68210 čekající na odjezd v Jihlavě
+- Os8335 s příjezdem v 8:34
+- (plánované) křižování s R662 v Bransouzích
+- Rn52241 čekající na odjezd v Okříškách
+
