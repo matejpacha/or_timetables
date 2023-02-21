@@ -42,7 +42,7 @@ Proveďte zkoušku brzdy (menu F5, tlak v potrubí na 4,7b, odbrzdit + zkouška 
 - Brzdící procenta: 123% (potřebná Bp = 62%)
 - Nejvyšší dovolená rychlost: 80km/h
 
-Služba oficiálně "končí" v Havlíčkově Brodě. Cesta je zabezpečená do Okrouhlice.
+Služba oficiálně "končí" v Havlíčkově Brodě. Cesta je zabezpečená do Okrouhlice. Délka služby: min 2:15
 
 Okolní provoz:
 - před manipulákem jede na Budějovice uhlí, nicméně hráč se s ním "nepotká"
@@ -75,7 +75,7 @@ Odjezd vlaku je v 4:25, takže je dost času na vyplnění dokumentů a na kávu
   - Pro Bp > 25% je možné jet max 55km/h
 - Nejvyšší dovolená rychlost: 65km/h
 
-Služba oficiálně končí v Moravských Budějovicích.
+Služba oficiálně končí v Moravských Budějovicích. Délka služby: min. 2 h
 
 Okolní provoz:
 - nástup a odjezd vlaku Os4803 v Jihlavě
@@ -106,7 +106,7 @@ Provedeme zkoušku brzdy.
 - Brzdící procenta: 123% (potřebná Bp = 62%)
 - Nejvyšší dovolená rychlost: 80km/h
 
-Služba oficiálně končí v Třebíči, nicméně lze dojet až do Brna.
+Služba oficiálně končí v Třebíči, nicméně lze dojet až do Brna. Délka služby: 3:40
 
 Okolní provoz:
 - Plánovaný příjezd Pn68200 v 3:05 (odjezd v 4:00)
@@ -129,7 +129,7 @@ Nástup v "bezpečně" ranních hodinách (nejlépe v režimu Cold&Dark) začín
 - Brzdící procenta:
 - Nejvyšší dovolená rychlost: 80km/h
 
-Služba oficiálně končí v Havlíčkově Brodě.
+Služba oficiálně končí v Havlíčkově Brodě. Délka služby: 1h
 
 Okolní provoz:
 - Pn68210 čekající na odjezd v Jihlavě
@@ -152,12 +152,35 @@ Na "lávce" si vyzvednete lokomotivu 754 047 (nejlépe v režimu Cold&Dark). Ná
 - Brzdící procenta: 128% (potřebná Bp=55%)
 - Nejvyšší dovolená rychlost: 100km/h
 
-Služba oficiálně končí v Třebíči, ale lze dojet až do Brna (ač bez časových údajů).
+Služba oficiálně končí v Třebíči, ale lze dojet až do Brna (ač bez časových údajů). Délka služby min. 1:30 (2:40)
 
 Okolní provoz:
 - přistavení R980 k nástupišti a jeho následný odjezd směr Havlíčkův Brod
 - Pn68210 čekající na odjezd v Jihlavě
 - Os8335 s příjezdem v 8:34
-- (plánované) křižování s R662 v Bransouzích
+- křižování s R662 v Bransouzích
 - Rn52241 čekající na odjezd v Okříškách
 
+## S rakví do Jihlavy Bosch-Diesel (Os4802/Os4873)
+Osobní vlak 4802 nezačíná v Brně, jako v předloze, ale nastupujete v Okříškách. Prodíráte se pravidelným provozem do Jihlavy, kde vjíždíte na obsazenou 7k (2. nástupiště). Tam na vás čeká souprava, se kterou se "svezete" do Jihlavy Bosch-Diesel. Napojení v Jihlavě je řízeno automaticky a proběhne až těsně před odjezdem (na rozdíl od skutečného provozu). Proto buď vyjíždíte se zpožděním, anebo ignorujete alespoň zjednodušené zkoušky brzdy. Pokud chcete, můžete "přestoupit" na vlakovou "laminátku" a pokračovat jako Os4802 až do Havlíčkova Brodu. Je ale možné zůstat sedět v 843 a např. si vyzkoušet funkci "Helper". Po příjezdu do Jihlava Bosch-Diesel se soupravy opět rozpojí a to je čas na rozhodnutí (nutno volbu potvrdit).
+Osobní vlak 4873 potom míří až do Třebíče. 
+
+- Číslo vlaku: Os4802 (vlak Os4802)
+- Hmotnost soupravy: 126.1t
+- Délka soupravy: 70m
+- Počet vozů: 2
+- Počet náprav: 12
+- Režim brzdy: R
+- Brzdná hmotnost:  97t
+- Brzdící procenta: 77% (potřebná Bp=62%)
+- Nejvyšší dovolená rychlost: 80km/h
+
+Služba oficiálně končí v Třebíči. Délka služby: 2h
+
+Okolní provoz:
+- křižování s Mn82741 v Bransouzích
+- křižování s Sp1661 v Lukách n.J.
+- R980 v Jihlavě
+- Odpojení Os4802 v Jihlava Bosch-Diesel, jeho odjezd směr Havl.Brod
+- Os8335 s příjezdem v 8:34
+- plánované křižování s Pn62230 v Lukách n.J.
