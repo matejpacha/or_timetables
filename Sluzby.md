@@ -184,3 +184,61 @@ Okolní provoz:
 - Odpojení Os4802 v Jihlava Bosch-Diesel, jeho odjezd směr Havl.Brod
 - Os8335 s příjezdem v 8:34
 - plánované křižování s Pn62230 v Lukách n.J.
+
+## Znojemská raketa - 1. část (Rn52241)
+Nastupujete v Havlíčkově Brodě cca 5 minut před odjezdem, což je dostatečný čas si projít "papíry". Na cestě do Jihlavy je plánováno křižování s Os4802 ve Šlapanově. Tato jednoduchá služba končí v Jihlavě, kde je ale potřebné lokomotivu odstavit do depa na "nulku". Po zastavení v Jihlavě na 4.koleji budete mít postavený posun na výtah. Odtud (kvůli návěstnímu systému MSTS/OR) vás posun zaveze až na pávovskou odbočku, odkud se vracíte do depa "na roh". Tam si vás převezme topírenský posun a odstaví "pod střechu".
+
+- Číslo vlaku: Rn52241 (vlak Rn52241)
+- Hmotnost soupravy: 775.9t
+- Délka soupravy: 235m
+- Počet vozů: 14
+- Počet náprav: 44
+- Režim brzdy: P
+- Brzdící procenta: Nutno spočítat po revizi brzd (potřebná Bp = 53%)
+  - Pro Bp > 53% je možné jet až 75km/h
+  - Pro Bp > 49% je možné jet až 70km/h
+  - Pro Bp > 35% je možné jet max 65km/h
+  - Pro Bp > 31% je možné jet max 60km/h
+  - Pro Bp > 25% je možné jet max 55km/h
+- Nejvyšší dovolená rychlost: 75km/h
+
+Služba oficiálně končí v depu Jihlava. Délka služby: 1h
+
+Okolní provoz:
+- oběh soupravy Os8330/Os8333 v Havlíčkově Brodě
+- křižování s Os4802 ve Šlapanově
+- R980 odstavený v Jihlavě
+- příjezd Pn68210 do Jihlavy
+- nástup dvojčat 751 na Rn52241
+
+## Znojemská raketa - 2. část (Rn52241)
+Ačkoliv je nástup plánovaný téměř hodinu před plánovaným odjezdem vlaku, nudit se při studeném startu alespoň v úvodu nebudete. Nastupujete zhruba v čase, kdy od Havlíčkova Brodu přijíždí vaše souprava. Po oživení lokomotiv pojedete na hranici depa, kde vyčkáte na povolení k posunu (to je čas na zahřátí motorů). Dlouhou chvíli vám zpestří okolní provoz. Přes výtah potom přivěsíte soupravu na 4.koleji. Po zkoušce brzdy vyčkáte na pravidelný odjezd vlaku. Cestou do Okříšek je plánováno pravidelné křižování v Lukách nad Jihlavou s vlakem Os4876.
+
+- Číslo vlaku: Rn52241 (vlak Rn52241)
+- Hmotnost soupravy: 775.9t
+- Délka soupravy: 235m
+- Počet vozů: 14
+- Počet náprav: 48
+- Režim brzdy: P
+- Brzdící procenta: Nutno spočítat po revizi brzd (potřebná Bp = 53%)
+  - Pro Bp > 53% je možné jet až 75km/h
+  - Pro Bp > 49% je možné jet až 70km/h
+  - Pro Bp > 35% je možné jet max 65km/h
+  - Pro Bp > 31% je možné jet max 60km/h
+  - Pro Bp > 25% je možné jet max 55km/h
+- Nejvyšší dovolená rychlost: 75km/h
+
+Služba oficiálně končí v depu Jihlava. Délka služby: min 1h
+
+Okolní provoz:
+- příjezd soupravy Rn52241 z Havlíčkova Brodu a odstup lokomotivy do depa (plus manipulace v depu topírenským posunem)
+- R980 odstavený v Jihlavě
+- Pn68210 v Jihlavě
+- příjezd OS4874 do Jihlavy a jeho odstavení do depa
+- příjezd Os8300 do Jihlavy a jeho odjezd směr Havlíčkův Brod
+- příjezd Os24804 do Jihlavy a jeho obrat zpět na vlak Os24805
+- příjezd Os8333 do Jihlavy a jeho odjezd směr Veselí n.L.
+- (plánovaný) odjezd Mn92551 směr Jihlava Město
+- (plánovaný) příjezd a odjezd Pn62801
+- křižování s Os4876 v Lukách nad Jihlavou
+
