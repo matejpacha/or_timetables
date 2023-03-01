@@ -220,8 +220,8 @@ Ačkoliv je nástup plánovaný téměř hodinu před plánovaným odjezdem vlak
 - Počet vozů: 14
 - Počet náprav: 48
 - Režim brzdy: P
-- Brzdící procenta: Nutno spočítat po revizi brzd (potřebná Bp = 53%)
-  - Pro Bp > 53% je možné jet až 75km/h
+- Brzdící procenta: Nutno spočítat po revizi brzd (potřebná Bp = 59%)
+  - Pro Bp > 59% je možné jet až 75km/h
   - Pro Bp > 49% je možné jet až 70km/h
   - Pro Bp > 35% je možné jet max 65km/h
   - Pro Bp > 31% je možné jet max 60km/h
