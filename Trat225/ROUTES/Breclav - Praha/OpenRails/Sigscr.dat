@@ -3106,6 +3106,7 @@ SCRIPT NAVY5A
 	extern float	this_sig_lr ();
 	extern float	next_sig_lr ();
 	extern float	sig_feature ();
+    extern float    TrainHasCallOn();
 	extern float	state;
 	extern float	draw_state;
 
@@ -3117,84 +3118,95 @@ SCRIPT NAVY5A
 	next_nor = next_sig_lr (SIGFN_NORMAL);
 
 	state = this_nor;
-	if ( this_nor ==# 0 )
-	{
-		draw_state = 0;
-	}
-	else if ( this_nor ==# 1 )
-	{
-		if ( !sig_feature (SIGFEAT_USER4) )
-			draw_state = 1;
-			else draw_state = 2;
-	}
-	else if ( this_nor ==# 2 )
-	{
-		if ( this_rep ==# -1 )
-		draw_state = 15;
-		else draw_state = 16;
-	}
-	else if ( this_nor ==# 3 )
-	{
-		if ( next_nor ==# 2 || next_nor ==# 7 )
-		{
-			draw_state = 5;
-		}
-		else
-		{
-			if ( this_rep ==# -1 )
-			draw_state = 3;
-			else draw_state = 4;
-		}
-	}
-	else if ( this_nor ==# 4 )
-	{
-		if ( next_nor ==# 2 || next_nor ==# 7 )
-		{
-			draw_state = 8;
-		}
-		else
-		{
-			if ( this_rep ==# -1 )
-			draw_state = 6;
-			else draw_state = 7;
-		}
-	}
-	else if ( this_nor ==# 5 )
-	{
-		if ( next_nor ==# 2 || next_nor ==# 7 )
-		{
-			draw_state = 11;
-		}
-		else
-		{
-			if ( this_rep ==# -1 )
-			draw_state = 9;
-			else draw_state = 10;
-		}
-	}
-	else if ( this_nor ==# 6 )
-	{
-		if ( next_nor ==# 2 || next_nor ==# 7 )
-		{
-			draw_state = 14;
-		}
-		else
-		{
-			if ( this_rep ==# -1 )
-			draw_state = 12;
-			else draw_state = 13;
-		}
-	}
-	else if ( this_nor ==# 7 )
-	{
-		draw_state = 17;
-	}
-	else
-	{
-		state = 8;
-		draw_state = 18;
-	}
+    
+    	
 
+
+	if ((block_state () == #BLOCK_OCCUPIED) && TrainHasCallOn())
+	{
+		state = 3;
+        draw_state = 15;
+	}
+    else
+    {
+    	if ( this_nor ==# 0 )
+    	{
+    		draw_state = 0;
+    	}
+    	else if ( this_nor ==# 1 )
+    	{
+    		if ( !sig_feature (SIGFEAT_USER4) )
+    			draw_state = 1;
+    			else draw_state = 2;
+    	}
+    	else if ( this_nor ==# 2 )
+    	{
+    		if ( this_rep ==# -1 )
+    		draw_state = 15;
+    		else draw_state = 16;
+    	}
+    	else if ( this_nor ==# 3 )
+    	{
+    		if ( next_nor ==# 2 || next_nor ==# 7 )
+    		{
+    			draw_state = 5;
+    		}
+    		else
+    		{
+    			if ( this_rep ==# -1 )
+    			draw_state = 3;
+    			else draw_state = 4;
+    		}
+    	}
+    	else if ( this_nor ==# 4 )
+    	{
+    		if ( next_nor ==# 2 || next_nor ==# 7 )
+    		{
+    			draw_state = 8;
+    		}
+    		else
+    		{
+    			if ( this_rep ==# -1 )
+    			draw_state = 6;
+    			else draw_state = 7;
+    		}
+    	}
+    	else if ( this_nor ==# 5 )
+    	{
+    		if ( next_nor ==# 2 || next_nor ==# 7 )
+    		{
+    			draw_state = 11;
+    		}
+    		else
+    		{
+    			if ( this_rep ==# -1 )
+    			draw_state = 9;
+    			else draw_state = 10;
+    		}
+    	}
+    	else if ( this_nor ==# 6 )
+    	{
+    		if ( next_nor ==# 2 || next_nor ==# 7 )
+    		{
+    			draw_state = 14;
+    		}
+    		else
+    		{
+    			if ( this_rep ==# -1 )
+    			draw_state = 12;
+    			else draw_state = 13;
+    		}
+    	}
+    	else if ( this_nor ==# 7 )
+    	{
+    		draw_state = 17;
+    	}
+    	else
+    	{
+    		state = 8;
+    		draw_state = 18;
+    	}
+    }
 
 SCRIPT NAVX5R
 
@@ -5073,6 +5085,7 @@ SCRIPT MECHRA_PRIVOL
 SCRIPT POSSV
 
 	extern float	this_sig_lr ();
+    extern float    TrainHasCallOn();
 	extern float	state;
 	extern float	draw_state;
 
@@ -5080,20 +5093,29 @@ SCRIPT POSSV
 	this_nor = this_sig_lr (SIGFN_NORMAL);
 
 	state = this_nor;
-	if ( this_nor ==# 0 )
+    
+    if ((block_state () == #BLOCK_OCCUPIED) && TrainHasCallOn())
 	{
-		draw_state = 0;
+        state = 1;
+        draw_state = 1;
 	}
-	else if ( this_nor ==# 1 )
-	{
-		draw_state = 1;
-	}
-	else
-	{
-		state = 8;
-		draw_state = 2;
-	}
-
+    else
+    {
+    
+    	if ( this_nor ==# 0 )
+    	{
+    		draw_state = 0;
+    	}
+    	else if ( this_nor ==# 1 )
+    	{
+    		draw_state = 1;
+    	}
+    	else
+    	{
+    		state = 8;
+    		draw_state = 2;
+    	}
+    }
 
 SCRIPT POSME
 
