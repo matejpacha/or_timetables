@@ -1688,7 +1688,7 @@ SCRIPT N50IA
 	draw_state = def_draw_state (state);
 
 
-SCRIPT N50BI
+SCRIPT N70IA
 
 	extern float	enabled;
 	extern float	route_set ();
@@ -1700,6 +1700,38 @@ SCRIPT N50BI
 	extern float	def_draw_state ();
 
 	extern float TrainHasCallOn();
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ((block_state () == #BLOCK_OCCUPIED) && TrainHasCallOn())
+	{
+		state = 3;
+	}
+	else
+	{
+		if ( !enabled || !route_set () ||
+			block_state () !=# 0 ||
+			( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+		state = 0;
+		else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+		state = 1;
+		else state = 3;
+	}
+	draw_state = def_draw_state (state);
+    
+    
+SCRIPT N50BI
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+	
+	extern float TrainHasCallOn();
 
 	float			next_nor;
 	next_nor = next_sig_lr (SIGFN_NORMAL);
@@ -1709,18 +1741,16 @@ SCRIPT N50BI
 		state = 3;
 	}
 	else
-	{	
+	{
 		if ( !enabled || !route_set () ||
 			block_state () !=# 0 ||
 			( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
-			state = 0;
+		state = 0;
 		else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
-			state = 1;
+		state = 1;
 		else state = 3;
-
-
 	}
-	draw_state = def_draw_state (state);	
+	draw_state = def_draw_state (state);
 
 
 SCRIPT N60UR
@@ -1933,6 +1963,31 @@ SCRIPT N30XX
 	draw_state = def_draw_state (state);
 
 
+SCRIPT N50XX
+
+	extern float	enabled;
+	extern float	route_set ();
+	extern float	next_sig_lr ();
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+	extern float	def_draw_state ();
+
+	float			next_nor;
+	next_nor = next_sig_lr (SIGFN_NORMAL);
+
+	if ( !enabled || !route_set () ||
+		block_state () !=# 0 ||
+		( sig_feature (SIGFEAT_GRADIENT_PLATE) && next_nor ==# 0 ) )
+	state = 0;
+	else if ( sig_feature (SIGFEAT_USER1) && next_nor ==# 1 )
+	state = 1;
+	else state = 3;
+
+	draw_state = def_draw_state (state);
+    
+    
 SCRIPT NPP
 
 	extern float	enabled;
@@ -3216,9 +3271,13 @@ SCRIPT NAVX5R
 	extern float	draw_state;
 
 	float			this_nor;
+    float           this_rep;
 	float			this_dis;
+    float           next_nor;
 	this_nor = this_sig_lr (SIGFN_NORMAL);
+    this_rep = this_sig_lr (SIGFN_REPEATER);
 	this_dis = this_sig_lr (SIGFN_DISTANCE);
+    next_nor = next_sig_lr (SIGFN_NORMAL);
 
 	state = this_nor;
 	if ( this_nor ==# 0 )
@@ -3228,31 +3287,75 @@ SCRIPT NAVX5R
 	else if ( this_nor ==# 1 )
 	{
 		if ( !sig_feature (SIGFEAT_USER4) )
-		draw_state = 1;
-		else draw_state = 2;
+			draw_state = 1;
+			else draw_state = 2;
 	}
 	else if ( this_nor ==# 2 )
 	{
-		if ( this_dis ==# -1 )
-		draw_state = 5;
-		else draw_state = 7;
+		if ( this_rep ==# -1 )
+		draw_state = 15;
+		else draw_state = 16;
 	}
 	else if ( this_nor ==# 3 )
 	{
-		if ( this_dis ==# -1 )
-		draw_state = 4;
-		else draw_state = 3;
+		if ( next_nor ==# 2 || next_nor ==# 7 )
+		{
+			draw_state = 5;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 3;
+			else draw_state = 4;
+		}
+	}
+	else if ( this_nor ==# 4 )
+	{
+		if ( next_nor ==# 2 || next_nor ==# 7 )
+		{
+			draw_state = 8;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 6;
+			else draw_state = 7;
+		}
+	}
+	else if ( this_nor ==# 5 )
+	{
+		if ( next_nor ==# 2 || next_nor ==# 7 )
+		{
+			draw_state = 11;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 9;
+			else draw_state = 10;
+		}
+	}
+	else if ( this_nor ==# 6 )
+	{
+		if ( next_nor ==# 2 || next_nor ==# 7 )
+		{
+			draw_state = 14;
+		}
+		else
+		{
+			if ( this_rep ==# -1 )
+			draw_state = 12;
+			else draw_state = 13;
+		}
 	}
 	else if ( this_nor ==# 7 )
 	{
-		if ( this_dis ==# -1 )
-		draw_state = 6;
-		else draw_state = 7;
+		draw_state = 17;
 	}
 	else
 	{
 		state = 8;
-		draw_state = 7;
+		draw_state = 18;
 	}
 
 
@@ -4967,7 +5070,47 @@ SCRIPT NAVVLOZ
 		state = 8;
 		draw_state = 4;
 	}
+    
 
+SCRIPT NAV_KMIT_MODRA
+
+	extern float	next_sig_lr ();
+    extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_nor;
+    float		next_nor;
+	this_nor = this_sig_lr (SIGFN_NORMAL);
+
+	state = this_nor;
+	if ( this_nor ==# 0 )
+	{
+		draw_state = 0;
+	}
+	else if ( this_nor ==# 1 )
+	{
+		draw_state = 3;
+	}
+    else if ( this_nor ==# 4 )
+	{
+		draw_state = 2;
+	}
+    else if ( this_nor ==# 5 )
+	{
+		draw_state = 2;
+	}
+	else if ( this_nor ==# 7 )
+	{
+		draw_state = 2;
+	}
+	else
+	{
+		state = 8;
+		draw_state = 4;
+	}
+    
 
 SCRIPT PREDMECH
 
@@ -5809,6 +5952,3788 @@ SCRIPT IND10
 	if ( !route_set () || this_sig_lr (SIGFN_NORMAL) ==# 0 )
 	draw_state = 1;
 	else draw_state = 0;
+    
+
+// nemecka soustava
+    
+SCRIPT KS_MAIN
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		next_state;
+	float		h_n_p;
+	float		next_state_rptr;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_n_p		= sig_feature ( SIGFEAT_NUMBER_PLATE );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( sig_feature ( SIGFEAT_USER1 ) )
+	{
+		if ( block_state() !=# BLOCK_CLEAR )
+		{
+			state = 0;
+			return;
+		}
+	}
+	else
+	{
+		if ( !enabled or block_state() !=# BLOCK_CLEAR )
+		{
+			state = 0;
+			return;
+		}
+	}
+
+	if ( h_n_p and next_state ==# 0 and not next_state_rptr ==# 2 )
+	{
+		state = 0;
+		return;
+	}
+
+	if ( h_n_p and next_state ==# 0 and next_state_rptr ==# 2 )
+	{
+		state = 2;
+		return;
+	}
+	
+	if ( speed_reduction ==# 2 )
+	{
+		state = 2;
+		return;	
+	}
+
+	if ( speed_reduction < 7 and speed_reduction > 2 )
+	{	
+		state = speed_reduction;
+		return;
+	}
+
+	if ( speed_reduction ==# 7 )
+	{
+		state = 7;
+		return;
+	}
+
+	if ( speed_reduction <=# 0 )
+	{
+		state = 0;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_OPTIK_ROT
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 3 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_OPTIK_GELB
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		next_state_rptr;
+	float		next_state;
+	float		h_n_p;
+	float		h_g_p;
+	float		this_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_n_p		= sig_feature ( SIGFEAT_NUMBER_PLATE );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 0 )
+	{
+		if ( ( next_state < 3 and not h_g_p ) or ( ( next_state_rptr ==# 1 ) and h_g_p ) )
+		{
+			draw_state = 1;
+			return;
+		}
+
+		return;
+	}	
+
+	if ( this_state < 3 and this_state >=# 0 )
+	{
+		draw_state = 0;
+		return;
+	}
+	
+	if ( ( next_state < 3 and not h_g_p ) or ( ( next_state_rptr ==# 1 ) and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_OPTIK_GRUEN
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		next_state_rptr;
+	float		next_state;
+	float		h_n_p;
+	float		h_g_p;
+	float		this_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_n_p		= sig_feature ( SIGFEAT_NUMBER_PLATE );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 0 )
+	{
+		if ( ( next_state ==# 7 and not h_g_p ) or ( ( next_state_rptr ==# 7 ) and h_g_p ) )
+		{
+			draw_state = 1;
+			return;
+		}
+
+		return;
+	}	
+
+	if ( this_state < 3 and this_state >=# 0 )
+	{
+		draw_state = 0;
+		return;
+	}
+	
+	if ( ( next_state ==# 7 and not h_g_p ) or ( next_state_rptr ==# 7 and h_g_p ) or
+		( next_state >=# this_state and not h_g_p ) or ( next_state_rptr >=# this_state and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_OPTIK_GRUEN_HS
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state > 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_OPTIK_GRUEN_BL_A
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	next_sig_lr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state	= next_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( next_state < this_state ) and next_state > 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_OPTIK_GRUEN_BL_B
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	next_sig_lr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state	= next_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+	
+	if ( next_state < 7 and next_state > 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_OPTIK_GRUEN_BL_C
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	next_sig_lr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state	= next_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( next_state < 7 and next_state > 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_OPTIK_WEISS1
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state ==# 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_OPTIK_WEISS2
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state ==# 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_OPTIK_WEISS3_A
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+	float		next_state_inf;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_inf	= next_sig_lr ( SIGFN_INFO );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( next_state < this_state ) and next_state_inf ==# 4 )
+ 	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_OPTIK_WEISS3_B
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+	float		next_state_inf;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_inf	= next_sig_lr ( SIGFN_INFO );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 0 )
+	{	
+		if ( next_state < 7 and next_state_inf ==# 4 )
+		{
+			draw_state = 1;
+			return;
+		}
+	
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_OPTIK_WEISS3_C
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+	float		next_state_inf;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_inf	= next_sig_lr ( SIGFN_INFO );
+
+	state = 7;
+	draw_state = 1;
+
+	if ( next_state ==# 7 )
+ 	{
+		draw_state = 0;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_ZS3_40
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 3 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( this_state ==# 3 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_ZS3V_40
+
+	extern float	this_sig_mr ();
+	extern float	next_sig_mr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	this_state 	= this_sig_mr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 0 )
+	{
+		if ( ( next_state ==# 3 and not h_g_p ) or ( ( next_state_rptr ==# 3 ) and h_g_p ) )
+		{
+			draw_state = 1;
+			return;
+		}
+
+		return;
+	}
+
+	if ( this_state < 3 or ( ( next_state >=# this_state ) and not h_g_p ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( ( ( next_state ==# 3 ) and not h_g_p ) or ( ( next_state_rptr ==# 3 ) and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_ZS3_60
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 3 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( this_state ==# 4 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_ZS3V_60
+
+	extern float	this_sig_mr ();
+	extern float	next_sig_mr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	this_state 	= this_sig_mr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 0 )
+	{
+		if ( next_state ==# 4 or ( ( next_state_rptr ==# 4 ) and h_g_p ) )
+		{
+			draw_state = 1;
+			return;
+		}
+
+		return;
+	}
+
+	if ( this_state < 3 or ( ( next_state >=# this_state ) and not h_g_p ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state ==# 4 or ( ( next_state_rptr ==# 4 ) and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_ZS3_80
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 3 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( this_state ==# 5 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_ZS3V_80
+
+	extern float	this_sig_mr ();
+	extern float	next_sig_mr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	this_state 	= this_sig_mr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 0 )
+	{
+		if ( next_state ==# 5 or ( ( next_state_rptr ==# 5 ) and h_g_p ) )
+		{
+			draw_state = 1;
+			return;
+		}
+
+		return;
+	}
+
+	if ( this_state < 3 or ( ( next_state >=# this_state ) and not h_g_p ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state ==# 5 or ( ( next_state_rptr ==# 5 ) and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_ZS3_100
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 3 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( this_state ==# 6 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_ZS3V_100
+
+	extern float	this_sig_mr ();
+	extern float	next_sig_mr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	this_state 	= this_sig_mr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 0 )
+	{
+		if ( next_state ==# 6 or ( ( next_state_rptr ==# 6 ) and h_g_p ) )
+		{
+			draw_state = 1;
+			return;
+		}
+
+		return;
+	}
+
+	if ( this_state < 3 or ( ( next_state >=# this_state ) and not h_g_p ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state ==# 6 or ( ( next_state_rptr ==# 6 ) and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_ZS6_1
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	enabled;
+	extern float	this_sig_mr ();
+	extern float	next_sig_mr ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		next_state_inf;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	this_state 	= this_sig_mr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_inf 	= next_sig_mr ( SIGFN_INFO );
+	next_state_rptr = next_sig_lr ( SIGFN_INFO );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( next_state ==# 0 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state_inf ==# 1 or block_state() !=# BLOCK_CLEAR )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state_inf ==# 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_ZS6_2
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	enabled;
+	extern float	this_sig_mr ();
+	extern float	next_sig_mr ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		next_state_inf;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	this_state 	= this_sig_mr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_inf 	= next_sig_mr ( SIGFN_INFO );
+	next_state_rptr = next_sig_lr ( SIGFN_INFO );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( next_state ==# 0 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state_inf ==# 1 or block_state() !=# BLOCK_CLEAR )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state_inf ==# 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT KS_ZS13
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	enabled;
+	extern float	this_sig_mr ();
+	extern float	next_sig_mr ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		next_state_inf;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	this_state 	= this_sig_mr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_inf 	= next_sig_mr ( SIGFN_INFO );
+	next_state_rptr = next_sig_lr ( SIGFN_INFO );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( next_state ==# 1 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT LS
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		next_state;
+	float		h_n_p;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_n_p		= sig_feature ( SIGFEAT_NUMBER_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( sig_feature ( SIGFEAT_USER1 ) )
+	{
+		if ( block_state() !=# BLOCK_CLEAR )
+		{
+			state = 0;
+			return;
+		}	
+	}
+	else
+	{
+		if ( !enabled or block_state() !=# BLOCK_CLEAR )
+		{
+			state = 0;
+			return;
+		}
+	}
+
+	if ( h_n_p and next_state ==# 0 )
+	{
+		state = 0;
+		return;
+	}
+	
+	if ( speed_reduction > 0 )
+	{
+		state = speed_reduction;
+		return;
+	}
+
+	if ( speed_reduction < 0 )
+	{
+		state = 0;
+		draw_state = 0;
+		return;
+	}
+
+	return;
+
+
+SCRIPT LS_OPTIK_ROT
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state ==# 0 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT LS_OPTIK_WEISS1
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state > 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT LS_OPTIK_WEISS2
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state > 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_HP
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		next_state;
+	float		h_n_p;
+	float		next_state_rptr;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_n_p		= sig_feature ( SIGFEAT_NUMBER_PLATE );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( sig_feature ( SIGFEAT_USER1 ) )
+	{
+		if ( block_state() !=# BLOCK_CLEAR )
+		{
+			state = 0;
+			draw_state = 0;
+			return;
+		}	
+	}
+	else
+	{
+		if ( !enabled or block_state() !=# BLOCK_CLEAR )
+		{
+			state = 0;
+			draw_state = 0;
+			return;
+		}
+	}
+
+	if ( speed_reduction ==# 0 )
+	{
+		state = 0;
+		return;	
+	}
+
+	if ( h_n_p and next_state ==# 0 and not next_state_rptr ==# 2 )
+	{
+		state = 0;
+		return;
+	}
+
+	if ( h_n_p and next_state ==# 0 and next_state_rptr ==# 2 )
+	{
+		state = 2;
+		return;
+	}
+	
+	if ( next_state ==# 1 and sig_feature ( SIGFEAT_USER2 ) )
+	{
+		state = 1;
+		return;
+	}
+
+	if ( speed_reduction ==# 1 )
+	{
+		state = 1;
+		return;	
+	}
+	
+	if ( speed_reduction ==# 2 )
+	{
+		state = 2;
+		return;	
+	}
+
+	if ( speed_reduction < 7 and speed_reduction > 2 )
+	{	
+		state = speed_reduction;
+		return;
+	}
+
+	if ( speed_reduction ==# 7 or block_state ==# BLOCK_CLEAR )
+	{
+		state = 7;
+		return;
+	}
+
+	if ( speed_reduction <=# 0 and ( sig_feature ( SIGFEAT_USER2 ) ) )
+	{
+		state = 1;
+		return;
+	}
+
+	if ( speed_reduction < 0 )
+	{
+		state = 0;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_HP_OPTIK_ROT1
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 3 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_HP_OPTIK_ROT2
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state ==# 0 and sig_feature ( SIGFEAT_USER3 ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( this_state ==# 0 and not sig_feature ( SIGFEAT_USER1 ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_HP_OPTIK_GELB
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( this_state > 2 ) and ( this_state < 6 ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_HP_OPTIK_GRUEN
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state > 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_HP_OPTIK_WEISS1
+
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		h_g_p;
+	float		next_state_rptr;
+	float		next_state;
+	float		this_state;
+	
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state ==# 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_HP_OPTIK_WEISS2
+
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		h_g_p;
+	float		next_state_rptr;
+	float		next_state;
+	float		this_state;
+	
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state ==# 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_HP_OPTIK_WEISS3
+
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		h_g_p;
+	float		next_state_rptr;
+	float		next_state;
+	float		this_state;
+	
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state ==# 7 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_VR_OPTIK_GELB1
+
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		h_g_p;
+	float		next_state_rptr;
+	float		next_state;
+	float		this_state;
+	
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( this_state < 3 ) and not ( this_state ==# -1 ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( this_state ==# -1 and ( ( next_state < 5 and not h_g_p ) or ( next_state_rptr < 5 and h_g_p ) ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	if ( ( next_state < 5 and not h_g_p ) or ( next_state_rptr < 5 and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_VR_OPTIK_GELB2
+
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		h_g_p;
+	float		next_state_rptr;
+	float		next_state;
+	float		this_state;
+	
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( this_state < 3 ) and not ( this_state ==# -1 ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( this_state ==# -1 and ( ( next_state < 3 and not h_g_p ) or ( next_state_rptr < 3 and h_g_p ) ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	if ( ( next_state < 3 and not h_g_p ) or ( next_state_rptr < 3 and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_VR_OPTIK_GRUEN1
+
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		h_g_p;
+	float		next_state_rptr;
+	float		next_state;
+	float		this_state;
+	
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( this_state < 3 ) and not ( this_state ==# -1 ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( this_state ==# -1 and ( ( next_state > 4 and not h_g_p ) or ( next_state_rptr > 4 and h_g_p ) ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	if ( ( next_state > 4 and not h_g_p ) or ( next_state_rptr > 4 and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_VR_OPTIK_GRUEN2
+
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	this_sig_lr ();
+	extern float	sig_feature ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		h_g_p;
+	float		next_state_rptr;
+	float		next_state;
+	float		this_state;
+	
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( this_state < 3 ) and not ( this_state ==# -1 ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( this_state ==# -1 and ( ( next_state > 2 and not h_g_p ) or ( next_state_rptr > 2 and h_g_p ) ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	if ( ( next_state > 2 and not h_g_p ) or ( next_state_rptr > 2 and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_VR_OPTIK_WEISS_A
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+	float		next_state_inf;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_inf	= next_sig_lr ( SIGFN_INFO );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 0 )
+	{
+		if ( next_state_inf ==# 4 )
+ 		{
+			draw_state = 1;
+			return;
+		}
+
+		return;
+	}
+
+	if ( this_state < 3 and this_state >=# 0 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state_inf ==# 4 )
+ 	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HVK_VR_OPTIK_WEISS_A
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+	float		next_state_inf;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_inf	= next_sig_lr ( SIGFN_INFO );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 0 )
+	{
+		if ( next_state_inf ==# 4 )
+ 		{
+			draw_state = 1;
+			return;
+		}
+
+		return;
+	}
+
+	if ( this_state < 3 and this_state >=# 0 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state_inf ==# 4 )
+ 	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_VR_OPTIK_WEISS_B
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state	= next_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 1;
+	return;
+
+
+SCRIPT HV_ZS6
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	enabled;
+	extern float	this_sig_mr ();
+	extern float	next_sig_mr ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		next_state_inf;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	this_state 	= this_sig_mr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_inf 	= next_sig_mr ( SIGFN_INFO );
+	next_state_rptr = next_sig_lr ( SIGFN_INFO );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( next_state ==# 0 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state_inf ==# 1 or block_state() !=# BLOCK_CLEAR )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state_inf ==# 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_ZS8
+
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		speed_reduction;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state ==# 1 and speed_reduction ==# 1 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HVK_ZS8
+
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		speed_reduction;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state ==# 1 and speed_reduction ==# 1 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_ZS3_60
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 3 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( this_state ==# 4 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_ZS3V_60
+
+	extern float	this_sig_mr ();
+	extern float	next_sig_mr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	this_state 	= this_sig_mr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 0 )
+	{
+		if ( next_state ==# 4 or ( ( next_state_rptr ==# 4 ) and h_g_p ) )
+		{
+			draw_state = 1;
+			return;
+		}
+
+		return;
+	}
+
+	if ( this_state < 3 or ( ( next_state > this_state ) and not h_g_p ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state ==# 4 or ( ( next_state_rptr ==# 4 ) and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_ZS3_80
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 3 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( this_state ==# 5 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_ZS3V_80
+
+	extern float	this_sig_mr ();
+	extern float	next_sig_mr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	this_state 	= this_sig_mr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 0 )
+	{
+		if ( next_state ==# 5 or ( ( next_state_rptr ==# 5 ) and h_g_p ) )
+		{
+			draw_state = 1;
+			return;
+		}
+
+		return;
+	}
+
+	if ( this_state < 3 or ( ( next_state > this_state ) and not h_g_p ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state ==# 5 or ( ( next_state_rptr ==# 5 ) and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_ZS3_100
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 3 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( this_state ==# 6 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HV_ZS3V_100
+
+	extern float	this_sig_mr ();
+	extern float	next_sig_mr ();
+	extern float	sig_feature ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	this_state 	= this_sig_mr ( SIGFN_NORMAL );
+	next_state 	= next_sig_mr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 0 )
+	{
+		if ( next_state ==# 6 or ( ( next_state_rptr ==# 6 ) and h_g_p ) )
+		{
+			draw_state = 1;
+			return;
+		}
+
+		return;
+	}
+
+	if ( this_state < 3 or ( ( next_state > this_state ) and not h_g_p ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state ==# 6 or ( ( next_state_rptr ==# 6 ) and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_HP
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		next_state;
+	float		next_state_dist;
+	float		h_n_p;
+	float		next_state_rptr;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_dist = next_sig_lr ( SIGFN_DISTANCE );
+	h_n_p		= sig_feature ( SIGFEAT_NUMBER_PLATE );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( sig_feature ( SIGFEAT_USER1 ) )
+	{
+		if ( block_state() !=# BLOCK_CLEAR )
+		{
+			state = 0;
+			return;
+		}	
+	}
+	else
+	{
+		if ( !enabled or block_state() !=# BLOCK_CLEAR )
+		{
+			state = 0;
+			return;
+		}
+
+	}
+
+	if ( sig_feature ( SIGFEAT_USER3 ) )
+	{
+		state = 1;
+		draw_state = 0;
+		return;	
+	}
+
+	if ( h_n_p and next_state ==# 0 and not next_state_rptr ==# 2 )
+	{
+		state = 0;
+		return;
+	}
+
+	if ( h_n_p and next_state ==# 0 and next_state_rptr ==# 2 )
+	{
+		state = 2;
+		return;
+	}
+	
+	if ( next_state ==# 1 and sig_feature ( SIGFEAT_USER2 ) )
+	{
+		state = 0;
+		return;
+	}
+
+	if ( speed_reduction ==# 0 )
+	{
+		state = 0;
+		return;
+	}
+
+	if ( speed_reduction ==# 1 )
+	{
+		state = 1;
+		return;	
+	}
+
+	if ( speed_reduction ==# 2 or block_state() ==# BLOCK_JN_OBSTRUCTED )
+	{
+		state = 2;
+		return;	
+	}
+
+	if ( ( speed_reduction > 2 ) and ( speed_reduction < 7 ) )
+	{
+		state = speed_reduction;
+		return;
+	}
+
+	if ( speed_reduction ==# 7 or block_state ==# BLOCK_CLEAR )
+	{
+		state = 7;
+		return;
+	}
+
+	if ( speed_reduction < 0 )
+	{
+		state = 0;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_HP_A
+
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 0;
+	draw_state = 0;
+
+	if ( this_state >=# 3 )
+	{
+		state = 7;
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_HP_A_B
+
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 0;
+	draw_state = 0;
+
+	if ( this_state >=# 3 )
+	{
+		state = 7;
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_HP_B
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 0;
+	draw_state = 0;
+
+	if ( ( this_state > 2 ) and ( this_state < 6 ) )
+	{
+		state = 7;
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_HP_B_B
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 0;
+	draw_state = 0;
+
+	if ( ( this_state > 2 ) and ( this_state < 6 ) )
+	{
+		state = 7;
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_HP_C
+
+	extern float	this_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 0;
+	draw_state = 0;
+
+	if ( this_state >=# 3 )
+	{
+		state = 7;
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_HP_D
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 0;
+	draw_state = 0;
+
+	if ( ( this_state > 2 ) and ( this_state < 6 ) )
+	{
+		state = 7;
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_VR_A
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	next_sig_mr ();
+	extern float	next_sig_lr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( block_state() !=# BLOCK_CLEAR ) and sig_feature ( SIGFEAT_USER1 ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( ( next_state > 2 and not h_g_p ) or ( ( next_state_rptr > 2 ) and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_VR_A_B
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	next_sig_mr ();
+	extern float	next_sig_lr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 1;
+
+	if ( ( block_state() !=# BLOCK_CLEAR ) and sig_feature ( SIGFEAT_USER1 ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( ( next_state < 5 and not h_g_p ) or ( ( next_state_rptr < 3 ) and h_g_p ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_VR_B
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( block_state() !=# BLOCK_CLEAR ) and sig_feature ( SIGFEAT_USER1 ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( ( next_state > 5 and not h_g_p ) or ( ( next_state_rptr > 5 ) and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_VR_B_B
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 1;
+
+	if ( ( block_state() !=# BLOCK_CLEAR ) and sig_feature ( SIGFEAT_USER1 ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( ( next_state < 3 and not h_g_p ) or ( ( next_state_rptr < 5 ) and h_g_p ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_VR_C
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	next_sig_mr ();
+	extern float	next_sig_lr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( block_state() !=# BLOCK_CLEAR ) and sig_feature ( SIGFEAT_USER1 ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( ( next_state > 2 and not h_g_p ) or ( ( next_state_rptr > 2 ) and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_VR_D
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( block_state() !=# BLOCK_CLEAR ) and sig_feature ( SIGFEAT_USER1 ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( ( next_state > 5 and not h_g_p ) or ( ( next_state_rptr > 5 ) and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_VR_E
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( block_state() !=# BLOCK_CLEAR ) and sig_feature ( SIGFEAT_USER1 ) )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( ( ( next_state < 6 and next_state > 2 ) and not h_g_p ) or 
+		( ( next_state_rptr < 6 and next_state_rptr > 2 ) and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_HP_ZSX
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float		speed_reduction;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+
+	state = 0;
+	draw_state = 0;
+
+	if ( this_state ==# 1 )
+	{
+		state = 7;
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT FS_HP_B_RA12
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 0;
+	draw_state = 0;
+
+	if ( this_state ==# 2 )
+	{
+		state = 7;
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_HP
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		next_state;
+	float		h_n_p;
+	float		next_state_rptr;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_n_p		= sig_feature ( SIGFEAT_NUMBER_PLATE );
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+
+	state = 7;
+
+	if ( sig_feature ( SIGFEAT_USER1 ) )
+	{
+		if ( block_state() !=# BLOCK_CLEAR )
+		{
+			state = 0;
+			return;
+		}	
+	}
+	else
+	{
+		if ( !enabled or block_state() !=# BLOCK_CLEAR )
+		{
+			state = 0;
+			return;
+		}
+
+	}
+
+	if ( h_n_p and next_state ==# 0 and not next_state_rptr ==# 2 )
+	{
+		state = 0;
+		return;
+	}
+
+	if ( h_n_p and next_state ==# 0 and next_state_rptr ==# 2 )
+	{
+		state = 2;
+		return;
+	}
+	
+	if ( next_state ==# 1 and sig_feature ( SIGFEAT_USER2 ) )
+	{
+		state = 0;
+		return;
+	}
+
+	if ( speed_reduction ==# 0 )
+	{	
+		state = 0;
+		return;
+	}
+	
+	if ( speed_reduction < 0 or speed_reduction ==# 1 or speed_reduction ==# 5 )
+	{	
+		state = 1;
+		return;
+	}
+	
+	if ( speed_reduction ==# 2 )
+	{
+		state = 2;
+		return;	
+	}
+
+	if ( speed_reduction < 7 and speed_reduction > 2 )
+	{	
+		state = speed_reduction;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_HP_S
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		next_state;
+	float		h_n_p;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_n_p		= sig_feature ( SIGFEAT_NUMBER_PLATE );
+
+	state = 1;
+
+	if ( !enabled or block_state() !=# BLOCK_CLEAR )
+	{
+		state = 0;
+		return;
+	}
+
+	if ( h_n_p and next_state ==# 0 )
+	{
+		state = 0;
+		return;
+	}
+	
+	if ( next_state ==# 1 and sig_feature ( SIGFEAT_USER2 ) )
+	{
+		state = 0;
+		return;
+	}
+	
+	if ( speed_reduction < 0 )
+	{	
+		state = 1;
+		return;
+	}	
+
+	if ( speed_reduction ==# 0 )
+	{	
+		state = 0;
+		return;
+	}
+	
+	if ( speed_reduction ==# 1 )
+	{	
+		state = 1;
+		return;
+	}
+	
+	if ( speed_reduction ==# 2 )
+	{
+		state = 2;
+		return;	
+	}
+
+	return;
+
+
+SCRIPT HL_HP_OPTIK_ROT
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 3 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_HP_OPTIK_GELB1
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state_rptr;
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+	float		h_g_p;
+
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 3 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( sig_feature ( SIGFEAT_USER3 ) )
+	{
+		draw_state = 0;
+		return;
+	}
+	
+	if ( ( next_state < 3 and not h_g_p ) or ( next_state_rptr < 3 and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_HP_OPTIK_GELB2
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state_rptr;
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+	float		h_g_p;
+
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 7 and this_state > 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_HP_OPTIK_GRUEN
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state_rptr;
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+	float		h_g_p;
+
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 3 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( ( next_state ==# 7 and not h_g_p ) or 
+		( next_state_rptr ==# 7 and h_g_p ) or sig_feature ( SIGFEAT_USER3 ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_HP_OPTIK_WEISS1
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state ==# 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_HP_OPTIK_WEISS2
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state ==# 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_HP_VRINFO
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state_rptr;
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+	float		h_g_p;
+
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state < 3 )
+	{
+		draw_state = 0;
+		return;
+	}
+	
+	if ( ( ( next_state ==# 3 and not h_g_p ) or
+		( next_state ==# 4 and not h_g_p ) ) or
+		( ( next_state_rptr ==# 3 and h_g_p ) or
+		( next_state_rptr ==# 4 and h_g_p ) ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	if ( ( next_state ==# 6 and not h_g_p ) or
+		( next_state ==# 6 and not h_g_p ) )
+	{
+		draw_state = 2;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_HP_LS
+
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		speed_reduction;
+
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+
+	if ( this_state < 3 )
+	{
+		state = 0;
+		draw_state = 0;
+		return;
+	}
+	
+	if ( this_state ==# 4 )
+	{
+		state = 7;
+		draw_state = 1;
+		return;
+	}
+
+	if ( this_state ==# 6 )
+	{
+		state = 7;
+		draw_state = 2;
+		return;
+	}
+
+	state = 0;
+	draw_state = 0;
+
+	return;
+
+
+SCRIPT HL_VR_OPTIK_GELB
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state_rptr;
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+	float		h_g_p;
+
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( next_state < 3 and not h_g_p ) or ( next_state_rptr < 3 and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_VR_OPTIK_GRUEN
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state_rptr;
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+	float		h_g_p;
+
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( ( next_state ==# 7 and not h_g_p ) or ( next_state_rptr ==# 7 and h_g_p ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_VRINFO
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state_rptr;
+	float		speed_reduction;
+	float		this_state;
+	float		next_state;
+	float		h_g_p;
+
+	next_state_rptr = next_sig_mr ( SIGFN_REPEATER );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_g_p 		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+	
+	if ( ( ( next_state ==# 3 and not h_g_p ) or
+		( next_state ==# 4 and not h_g_p ) ) or
+		( ( next_state_rptr ==# 3 and h_g_p ) or
+		( next_state_rptr ==# 4 and h_g_p ) ) )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	if ( ( next_state ==# 6 and not h_g_p ) or
+		( next_state ==# 6 and not h_g_p ) )
+	{
+		draw_state = 2;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_ZS1_B
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+	float		this_state;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( this_state ==# 0 )
+	{
+		draw_state = 0;
+		return;
+	}
+	
+	if ( this_state ==# 1 and speed_reduction !=# 5 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_ZS7
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	enabled;
+	extern float	this_sig_mr ();
+	extern float	next_sig_mr ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		next_state_inf;
+	float		next_state_rptr;
+	float		h_g_p;
+
+	this_state 	= this_sig_mr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_inf 	= next_sig_mr ( SIGFN_INFO );
+	next_state_rptr = next_sig_lr ( SIGFN_INFO );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( next_state_inf ==# 1 or next_state < 3 )
+	{
+		draw_state = 0;
+		return;
+	}
+
+	if ( next_state_inf ==# 2 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT HL_ZS8
+
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	next_sig_mr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+	float		speed_reduction;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	this_state 	= this_sig_lr ( SIGFN_NORMAL );
+	
+	state = 0;
+	draw_state = 0;	
+
+	if ( next_state ==# 1 and speed_reduction ==# 1 )
+	{
+		state = 7;
+		draw_state = 1;
+		return;
+	}	
+	
+	return;
+
+
+SCRIPT HL_ZS13
+
+	extern float	block_state ();
+	extern float	route_set ();
+	extern float	sig_feature ();
+	extern float	this_sig_lr ();
+	extern float	enabled;
+	extern float	this_sig_mr ();
+	extern float	next_sig_mr ();
+	extern float	next_sig_lr ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		this_state;
+	float 		next_state;
+	float		next_state_inf;
+	float		next_state_rptr;
+	float		h_g_p;
+	float		speed_reduction;
+
+	this_state 	= this_sig_mr ( SIGFN_NORMAL );
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	next_state_inf 	= next_sig_mr ( SIGFN_INFO );
+	next_state_rptr = next_sig_lr ( SIGFN_INFO );
+	h_g_p		= sig_feature ( SIGFEAT_GRADIENT_PLATE );
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+
+	state = 7;
+	draw_state = 0;
+
+	if ( next_state ==# 1 )
+	{
+		draw_state = 1;
+		return;
+	}
+
+	return;
+
+
+SCRIPT RA11X
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	next_sig_lr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		h_n_p;
+
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_n_p		= sig_feature ( SIGFEAT_NUMBER_PLATE );
+
+	if ( ( !enabled or block_state() !=# BLOCK_CLEAR ) or ( h_n_p and next_state ==# 0 ) )
+	{
+		state = 0;
+	}
+	else
+	{
+		state = 2;
+	}
+
+	draw_state = def_draw_state (state);
+
+	return;
+
+
+SCRIPT RA11AZ
+
+	extern float	block_state ();
+	extern float	sig_feature ();
+	extern float	next_sig_lr ();
+	extern float	enabled;
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		h_n_p;
+
+	next_state 	= next_sig_lr ( SIGFN_NORMAL );
+	h_n_p		= sig_feature ( SIGFEAT_NUMBER_PLATE );
+
+	if ( ( !enabled or block_state() !=# BLOCK_CLEAR ) or ( h_n_p and next_state ==# 0 ) )
+	{
+		state = 0;
+		draw_state = 0;
+		return;
+	}
+	else
+	{
+		state = 2;
+		draw_state = 1;
+		return;
+	}
+
+
+	return;
+
+
+SCRIPT CONFIG_ZS6_A
+
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	state = 1;
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT CONFIG_ZS6_B
+
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	state = 2;
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT CONFIG_VKB_A
+
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	state = 3;
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT CONFIG_VKB_B
+
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	state = 4;
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT S_R
+
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	state = 7;
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT S_R_H
+
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	state = 0;
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT S_R_Z
+
+	extern float	sig_feature ();
+	extern float	next_sig_mr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+
+	state = 1;
+
+	if ( sig_feature ( SIGFEAT_USER1 ) and ( speed_reduction < state ) )
+	{
+		state = speed_reduction;
+	}
+
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT S_R_R
+
+	extern float	sig_feature ();
+	extern float	next_sig_mr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+
+	state = 2;
+
+	if ( sig_feature ( SIGFEAT_USER1 ) and ( speed_reduction < state ) )
+	{
+		state = speed_reduction;
+	}
+
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT S_R_40
+
+	extern float	sig_feature ();
+	extern float	next_sig_mr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+
+	state = 3;
+
+	if ( sig_feature ( SIGFEAT_USER1 ) and ( speed_reduction < state ) )
+	{
+		state = speed_reduction;
+	}
+
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT S_R_60
+
+	extern float	sig_feature ();
+	extern float	next_sig_mr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+
+	state = 4;
+
+	if ( sig_feature ( SIGFEAT_USER1 ) and ( speed_reduction < state ) )
+	{
+		state = speed_reduction;
+	}
+
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT S_R_80
+
+	extern float	sig_feature ();
+	extern float	next_sig_mr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+
+	state = 5;
+
+	if ( sig_feature ( SIGFEAT_USER1 ) and ( speed_reduction < state ) )
+	{
+		state = speed_reduction;
+	}
+
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT S_R_100
+
+	extern float	sig_feature ();
+	extern float	next_sig_mr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+
+	state = 6;
+
+	if ( sig_feature ( SIGFEAT_USER1 ) and ( speed_reduction < state ) )
+	{
+		state = speed_reduction;
+	}
+
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT S_R_VMAX
+
+	extern float	sig_feature ();
+	extern float	next_sig_mr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+
+	state = 7;
+
+	if ( sig_feature ( SIGFEAT_USER1 ) and ( speed_reduction < state ) )
+	{
+		state = speed_reduction;
+	}
+
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT VMAX
+
+	extern float	next_sig_mr ();
+	extern float	block_state ();
+	extern float	def_draw_state ();
+	extern float	enabled ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		speed_reduction;
+
+	speed_reduction = next_sig_mr ( SIGFN_SHUNTING );
+
+	if ( !enabled or block_state() !=# BLOCK_CLEAR )
+	{
+		state = 0;
+	}
+	else
+	{
+		if ( sig_feature ( SIGFEAT_USER1 ) and not speed_reduction < 3 )
+		{
+			state = speed_reduction;
+			draw_state = def_draw_state (state);
+			return;
+		}
+
+		state = 7;
+	}
+
+	draw_state = def_draw_state (state);
+	return;
+
+
+SCRIPT VMAX_CONFIG
+
+	extern float	next_sig_lr ();
+	extern float	this_sig_lr ();
+	extern float	def_draw_state ();
+	extern float	state;
+	extern float	draw_state;
+
+	float		next_state;
+	float		this_state;
+
+	next_state = next_sig_lr ( SIGFN_NORMAL );
+	this_state = this_sig_lr ( SIGFN_NORMAL );
+
+	state = 7;
+
+	if ( next_state < 3 )
+	{
+		state = 1;
+		draw_state = def_draw_state (state);
+	}
+
+	if ( this_state ==# 0 )
+	{
+		state = 2;
+		draw_state = def_draw_state (state);
+		return;
+	}
+	
+	if ( next_state < 7 and next_state > 2 )
+	{
+		state = next_state;
+		draw_state = def_draw_state (state);
+		return;
+	}
+	
+	draw_state = def_draw_state (state);
+	return;
+    
 
 
 // Puvodni verze //
