@@ -2130,7 +2130,7 @@ SCRIPT POSUN
 	extern float	state;
 	extern float	draw_state;
 	extern float	def_draw_state ();
-	extern float TrainHasCallOn();
+	extern float    TrainHasCallOn();
 
 	float			next_nor;
 	next_nor = next_sig_lr (SIGFN_NORMAL);
